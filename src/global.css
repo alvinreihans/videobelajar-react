@@ -1,0 +1,86 @@
+:root {
+  /* ================= PRIMARY ================= */
+  --primary: #3ecf4c;
+  --primary-400: #6be26b;
+  --primary-300: #94f08b;
+  --primary-200: #c0fab4;
+  --primary-100: rgba(226, 252, 217, 0.8);
+
+  /* ================= SECONDARY ================= */
+  --secondary: #ffbd3a;
+  --secondary-400: #ffd26b;
+  --secondary-300: #ffdf88;
+  --secondary-200: #ffecb0;
+  --secondary-100: rgba(255, 247, 215, 0.8);
+
+  /* ================= TERTIARY ================= */
+  --tertiary: #f64920;
+  --tertiary-400: #f98256;
+  --tertiary-300: #fca578;
+  --tertiary-200: #fecaa5;
+  --tertiary-100: rgba(254, 232, 210, 0.8);
+
+  /* ================= INFO ================= */
+  --info-default: #0980e2;
+  --info-hover: #0663c2;
+  --info-pressed: #044aa2;
+  --info-bg: #ebf9fe;
+
+  /* ================= SUCCESS ================= */
+  --success-default: #38d189;
+  --success-hover: #28b380;
+  --success-pressed: #1c9675;
+  --success-bg: #e0fddf;
+
+  /* ================= WARNING ================= */
+  --warning-default: #fce91b;
+  --warning-hover: #d8c613;
+  --warning-pressed: #b5a40d;
+  --warning-bg: #fcf8ca;
+
+  /* ================= ERROR ================= */
+  --error-default: #ff5c2b;
+  --error-hover: #db3d1f;
+  --error-pressed: #b72315;
+  --error-bg: #fce3d1;
+
+  /* ================= GREYSCALE ================= */
+  --grey-900: #212121;
+  --grey-800: #424242;
+  --grey-700: #616161;
+  --grey-600: #757575;
+  --grey-500: #9e9e9e;
+  --grey-400: #bdbdbd;
+  --grey-300: #e0e0e0;
+  --grey-200: #eeeeee;
+  --grey-100: #f5f5f5;
+  --grey-50: #fafafa;
+
+  /* ================= BACKGROUND ================= */
+  --bg-primary: #ffffff;
+  --bg-base: #f4f5fa;
+  --bg-secondary: #f9fafc;
+
+  /* ================= TEXT (DARK) ================= */
+  --text-dark-primary: #222325;
+  --text-dark-secondary: rgba(51, 51, 51, 0.68);
+  --text-dark-disabled: rgba(58, 53, 65, 0.38);
+
+  /* ================= TEXT (LIGHT) ================= */
+  --text-light-primary: #ffffff;
+  --text-light-secondary: #c1c2c4;
+  --text-light-disabled: #9d9ea1;
+
+  /* ================= BORDER ================= */
+  --border-default: rgba(58, 53, 65, 0.12);
+
+  /* ================= GRADIENTS ================= */
+  --gradient-info: linear-gradient(286.17deg, #004ce8 0%, #6f9eff 100%);
+  --gradient-success: linear-gradient(286.17deg, #00c247 0%, #73ffa6 100%);
+  --gradient-warning: linear-gradient(
+    286.17deg,
+    #ffe16a 0%,
+    rgba(255, 229, 128, 0.21) 100%
+  );
+  --gradient-error: linear-gradient(286.17deg, #ff3333 36.98%, #ff8a9b 100%);
+}
