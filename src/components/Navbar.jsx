@@ -46,9 +46,9 @@ export default function Navbar() {
                     className="w-9 h-9 rounded-md cursor-pointer border"
                   />
                   <div className="absolute right-0 mt-2 hidden group-hover:block bg-white border shadow rounded-lg p-2">
-                    <button onClick={logout} className="text-red-500 text-sm">
+                    <Button onClick={logout} color="secondary">
                       Logout
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

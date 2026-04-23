@@ -2,6 +2,7 @@ export default function UnstyledButton({
   children,
   icon = 'none',
   size = 'md',
+  variantStyle = '',
   className = '',
   as: Component = 'button',
   ...props
@@ -11,10 +12,12 @@ export default function UnstyledButton({
     lg: 'text-base px-6 py-2',
   };
 
-  const base = 'inline-flex items-center gap-2 font-bold text-[#222325]';
+  const base = 'inline-flex items-center gap-2 font-bold';
 
   return (
-    <Component className={`${base} ${sizes[size]} ${className}`} {...props}>
+    <Component
+      className={`${base} ${sizes[size]} ${variantStyle} ${className}`}
+      {...props}>
       {(icon === 'left' || icon === 'both') && <span>←</span>}
       {children}
       {(icon === 'right' || icon === 'both') && <span>→</span>}
