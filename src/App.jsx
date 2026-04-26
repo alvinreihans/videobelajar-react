@@ -19,7 +19,7 @@ function App() {
         <Route
           path="/login"
           element={
-            <MainLayout>
+            <MainLayout type="auth">
               <Login />
             </MainLayout>
           }
@@ -27,7 +27,7 @@ function App() {
         <Route
           path="/register"
           element={
-            <MainLayout>
+            <MainLayout type="auth">
               <Register />
             </MainLayout>
           }
