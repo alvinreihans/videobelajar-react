@@ -11,11 +11,10 @@ export default function Input({
   ...props
 }) {
   const [show, setShow] = useState(false);
-
   const inputType = isPassword ? (show ? 'text' : 'password') : type;
 
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {/* LABEL */}
       {label && (
         <p className="text-sm text-text-dark-secondary">
@@ -25,14 +24,13 @@ export default function Input({
       )}
 
       {/* INPUT FIELD */}
-      <div className="flex items-center border border-border rounded-md h-12 px-3 bg-background-primary">
+      <div className="flex items-center border border-border rounded-md h-12 px-3 bg-background-primary shadow-sm transition-colors focus-within:border-primary">
         <input
           type={inputType}
           placeholder={placeholder}
-          className="flex-1 outline-none text-text-dark-primary placeholder:text-text-dark-disabled bg-transparent"
+          className="flex-1 outline-none text-text-dark-primary placeholder:text-text-dark-disabled bg-transparent text-sm"
           {...props}
         />
-
         {/* PASSWORD TOGGLE */}
         {isPassword && (
           <button type="button" onClick={() => setShow(!show)} className="ml-2">
