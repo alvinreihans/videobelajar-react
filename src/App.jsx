@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Landing from './pages/Landing';
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MainLayout from './layouts/MainLayout';
@@ -12,7 +12,7 @@ function App() {
           path="/"
           element={
             <MainLayout>
-              <Landing />
+              <Home />
             </MainLayout>
           }
         />

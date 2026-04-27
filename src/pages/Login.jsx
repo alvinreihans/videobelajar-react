@@ -36,7 +36,6 @@ export default function Login() {
         <form onSubmit={handleLogin} className="flex flex-col gap-6">
           <Input
             label="E-Mail"
-            helperText="Test"
             required
             placeholder="Masukkan email"
             value={email}
