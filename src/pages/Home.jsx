@@ -170,28 +170,56 @@ export default function Home() {
     <div className="flex flex-col items-center gap-16 px-4 md:px-8 lg:px-[120px] py-16">
       {/* HERO */}
       <div
-        className="w-full rounded-[10px] flex flex-col items-center justify-center text-center px-6 md:px-[140px] py-16 gap-6"
+        className="
+    w-full rounded-[10px]
+    flex flex-col items-center justify-center text-center
+    px-5 py-16
+    md:px-16 md:py-20
+    gap-6
+  "
         style={{
           minHeight: '400px',
           background:
             'linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(hero-bg.png) center/cover no-repeat',
         }}>
-        <div className="flex flex-col items-center gap-3 max-w-[920px]">
-          <h1 className="text-text-light-primary font-bold text-[32px] md:text-[48px] leading-[110%]">
+        <div className="flex flex-col items-center gap-3 w-full max-w-[280px] md:max-w-[720px]">
+          {/* TITLE */}
+          <h1
+            className="
+        text-text-light-primary font-bold
+        text-2xl md:text-4xl
+        leading-[110%]
+      ">
             Revolusi Pembelajaran: Temukan Ilmu Baru melalui Platform Video
             Interaktif!
           </h1>
-          <p className="text-text-light-primary text-base font-medium leading-[140%] tracking-[0.2px]">
+
+          {/* DESC */}
+          <p
+            className="
+        text-text-light-primary
+        text-sm md:text-base
+        font-medium
+        leading-[140%]
+        tracking-[0.2px]
+      ">
             Temukan ilmu baru yang menarik dan mendalam melalui koleksi video
             pembelajaran berkualitas tinggi. Tidak hanya itu, Anda juga dapat
             berpartisipasi dalam latihan interaktif yang akan meningkatkan
             pemahaman Anda.
           </p>
         </div>
+
+        {/* BUTTON */}
         <Button
           color="primary"
           variant="contained"
-          className="rounded-[10px] px-7">
+          className="
+      w-full max-w-[280px]
+      md:w-auto md:max-w-none
+      rounded-[10px]
+      text-sm md:text-base
+    ">
           Temukan Video Course untuk Dipelajari!
         </Button>
       </div>
@@ -250,39 +278,82 @@ export default function Home() {
 
       {/* NEWSLETTER */}
       <div
-        className="w-full rounded-[4px] flex items-center justify-center py-20 px-8"
+        className="
+    w-full rounded-[4px] flex justify-center
+    px-5 py-10
+    md:px-8 md:py-20
+  "
         style={{
           background:
             'linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url(newsletter-bg.png) center/cover no-repeat',
           boxShadow: '0px 12px 45px -10px rgba(0, 59, 222, 0.2)',
         }}>
-        <div className="flex flex-col items-center gap-10 w-full max-w-[525px]">
+        <div className="flex flex-col items-center gap-8 md:gap-10 w-full max-w-[525px]">
+          {/* TEXT */}
           <div className="flex flex-col items-center gap-1 text-center">
-            <span className="text-text-light-secondary text-lg font-medium tracking-[0.2px]">
+            <span className="text-text-light-secondary text-sm md:text-lg font-medium tracking-[0.2px]">
               NEWSLETTER
             </span>
-            <div className="flex flex-col items-center gap-2.5">
-              <h2 className="text-text-light-primary font-semibold text-[32px] leading-[110%]">
+
+            <div className="flex flex-col items-center gap-2 md:gap-2.5">
+              <h2
+                className="
+          text-text-light-primary font-semibold
+          text-2xl md:text-[32px]
+          leading-[110%]
+        ">
                 Mau Belajar Lebih Banyak?
               </h2>
-              <p className="text-text-light-primary text-base font-normal leading-[140%] tracking-[0.2px] opacity-90">
+
+              <p
+                className="
+          text-text-light-primary
+          text-sm md:text-base
+          leading-[140%]
+          tracking-[0.2px]
+          opacity-90
+          max-w-[280px] md:max-w-none
+        ">
                 Daftarkan dirimu untuk mendapatkan informasi terbaru dan
                 penawaran spesial dari program-program terbaik hariesok.id
               </p>
             </div>
           </div>
-          <div className="flex items-center bg-background-primary rounded-[10px] w-full px-8 py-2 gap-5">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Masukkan Emailmu"
-              className="flex-1 outline-none text-base text-text-dark-secondary tracking-[0.2px] bg-transparent"
-            />
+
+          {/* FORM */}
+          <div className="w-full flex flex-col gap-4">
+            {/* INPUT */}
+            <div
+              className="
+        flex items-center
+        bg-background-primary
+        rounded-[10px]
+        px-4 py-2
+        md:px-8
+      ">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Masukkan Emailmu"
+                className="
+            w-full outline-none bg-transparent
+            text-sm md:text-base
+            text-text-dark-secondary
+            tracking-[0.2px]
+          "
+              />
+            </div>
+
+            {/* BUTTON */}
             <Button
               color="secondary"
               variant="contained"
-              className="shrink-0 rounded-[10px]">
+              className="
+          w-full
+          rounded-[10px]
+          text-sm md:text-base
+        ">
               Subscribe
             </Button>
           </div>
