@@ -110,15 +110,48 @@ export default function Navigation({ variant = 'guest' }) {
 
       {/* MOBILE OVERLAY MENU */}
       {isMenuOpen && variant !== 'auth' && (
-        <div className="md:hidden absolute left-0 top-full w-full bg-white shadow-lg border-b border-border z-40">
-          {current.showNav && (
-            <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-              Kategori
-            </div>
+        <div className="md:hidden absolute left-0 top-full w-full bg-white shadow-lg z-40 rounded-b-md overflow-hidden">
+          {/* ===== GUEST MODE ===== */}
+          {variant === 'guest' && (
+            <>
+              {/* BERANDA  */}
+              <div className="px-4 py-4 border-b border-border font-bold text-primary">
+                Beranda
+              </div>
+
+              {/* KATEGORI */}
+              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                Kategori
+              </div>
+
+              {/* BUTTON SECTION */}
+              <div className="p-3 flex flex-col gap-2">
+                <Link to="/login">
+                  <Button
+                    variant="contained"
+                    className="w-full rounded-[10px] font-bold">
+                    Login
+                  </Button>
+                </Link>
+
+                <Link to="/register">
+                  <Button
+                    variant="outlined"
+                    className="w-full rounded-[10px] font-bold">
+                    Register
+                  </Button>
+                </Link>
+              </div>
+            </>
           )}
 
-          {current.showAvatar && (
+          {/* ===== USER MODE ===== */}
+          {variant === 'user' && (
             <>
+              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                Kategori
+              </div>
+
               <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
                 Profil Saya
               </div>
@@ -137,17 +170,6 @@ export default function Navigation({ variant = 'guest' }) {
                 Keluar
                 <img src="/icon-logout.svg" className="w-5 h-5" />
               </button>
-            </>
-          )}
-
-          {current.showButtons && (
-            <>
-              <Link className="block px-4 py-4 text-primary font-bold border-b border-border">
-                Login
-              </Link>
-              <Link className="block px-4 py-4 text-primary font-bold">
-                Register
-              </Link>
             </>
           )}
         </div>
