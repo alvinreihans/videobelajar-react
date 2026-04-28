@@ -17,7 +17,8 @@ const courses = [
     description:
       'Mulai transformasi dengan instruktur profesional, harga yang terjangkau, dan kurikulum terbaik.',
     instructor: 'Rina Saputra',
-    instructorTitle: 'Senior Accountant di Gojek',
+    jobTitle: 'Senior Accountant',
+    company: 'Gojek',
     rating: 4.0,
     students: '86',
     price: 'Rp 300K',
@@ -32,7 +33,8 @@ const courses = [
     description:
       'Optimalkan iklan di Facebook & Instagram untuk meningkatkan penjualan secara signifikan.',
     instructor: 'Kevin Tan',
-    instructorTitle: 'Digital Marketer di Shopee',
+    jobTitle: 'Digital Marketer',
+    company: 'Shopee',
     rating: 4.0,
     students: '1.1k',
     price: 'Rp 250K',
@@ -47,7 +49,8 @@ const courses = [
     description:
       'Pelajari prinsip desain modern untuk menciptakan pengalaman pengguna yang luar biasa.',
     instructor: 'Jenna Ortega',
-    instructorTitle: 'Product Designer di Tokopedia',
+    jobTitle: 'Product Designer',
+    company: 'Tokopedia',
     rating: 4.5,
     students: '2.4k',
     price: 'Rp 180K',
@@ -62,7 +65,8 @@ const courses = [
     description:
       'Tingkatkan kepercayaan diri dan kemampuan berbicara di depan umum secara profesional.',
     instructor: 'Budi Santoso',
-    instructorTitle: 'Communication Coach di Traveloka',
+    jobTitle: 'Communication Coach',
+    company: 'Traveloka',
     rating: 3.5,
     students: '900',
     price: 'Rp 150K',
@@ -77,7 +81,8 @@ const courses = [
     description:
       'Kuasai strategi pemasaran digital yang efektif untuk mengembangkan bisnis di era modern.',
     instructor: 'Sari Dewi',
-    instructorTitle: 'Marketing Lead di Bukalapak',
+    jobTitle: 'Marketing Lead',
+    company: 'Bukalapak',
     rating: 4.0,
     students: '3.2k',
     price: 'Rp 320K',
@@ -92,7 +97,8 @@ const courses = [
     description:
       'Pahami dasar-dasar pengembangan bisnis untuk membawa perusahaan ke level berikutnya.',
     instructor: 'Ahmad Fauzi',
-    instructorTitle: 'Business Analyst di Grab',
+    jobTitle: 'Business Analyst',
+    company: 'Grab',
     rating: 3.5,
     students: '1.5k',
     price: 'Rp 200K',
@@ -107,7 +113,8 @@ const courses = [
     description:
       'Ciptakan karya seni digital yang menakjubkan menggunakan Procreate dari nol.',
     instructor: 'Maya Putri',
-    instructorTitle: 'Illustrator di Kaskus',
+    jobTitle: 'Illustrator',
+    company: 'Kaskus',
     rating: 4.5,
     students: '780',
     price: 'Rp 175K',
@@ -122,7 +129,8 @@ const courses = [
     description:
       'Temukan keseimbangan hidup dan tingkatkan produktivitas dengan teknik mindfulness terbukti.',
     instructor: 'Hana Wijaya',
-    instructorTitle: 'Life Coach di Welltech',
+    jobTitle: 'Life Coach',
+    company: 'Welltech',
     rating: 4.0,
     students: '2.1k',
     price: 'Rp 130K',
@@ -137,7 +145,8 @@ const courses = [
     description:
       'Pelajari teknik Excel tingkat lanjut untuk analisis data bisnis yang powerful dan efisien.',
     instructor: 'Doni Kusuma',
-    instructorTitle: 'Finance Analyst di Astra',
+    jobTitle: 'Finance Analyst',
+    company: 'Astra',
     rating: 3.5,
     students: '4.0k',
     price: 'Rp 100K',

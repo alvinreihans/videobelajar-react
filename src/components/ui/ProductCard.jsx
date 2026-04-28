@@ -56,11 +56,13 @@ function PriceSection({ price, originalPrice, isMobile = false }) {
 
 // ─── INSTRUCTOR ───────────────────────────────────────────────────────────────
 
-function Instructor({ avatar, instructor, instructorTitle, isMobile = false }) {
-  const parts = instructorTitle?.split(' di ');
-  const jobTitle = parts?.[0];
-  const company = parts?.[1];
-
+function Instructor({
+  avatar,
+  instructor,
+  jobTitle,
+  company,
+  isMobile = false,
+}) {
   return (
     <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-2.5'}`}>
       <img
@@ -70,19 +72,24 @@ function Instructor({ avatar, instructor, instructorTitle, isMobile = false }) {
           isMobile ? 'w-9 h-9' : 'w-10 h-10'
         }`}
       />
+
       <div className="flex flex-col">
+        {/* NAME */}
         <span
           className={`font-medium text-text-dark-primary tracking-[0.2px] leading-[140%] ${
             isMobile ? 'text-sm' : 'text-base'
           }`}>
           {instructor}
         </span>
+
+        {/* TITLE */}
         <div
           className={`flex items-center gap-1 text-text-dark-secondary tracking-[0.2px] leading-[140%] ${
             isMobile ? 'text-[12px]' : 'text-sm'
           }`}>
           <span className="font-normal">{jobTitle}</span>
-          {company && (
+
+          {!isMobile && company && (
             <>
               <span className="font-normal">di</span>
               <span className="font-bold">{company}</span>
@@ -100,7 +107,8 @@ export default function ProductCard({
   title,
   description,
   instructor,
-  instructorTitle,
+  jobTitle,
+  company,
   rating,
   students,
   price,
@@ -127,7 +135,8 @@ export default function ProductCard({
             <Instructor
               avatar={avatar}
               instructor={instructor}
-              instructorTitle={instructorTitle}
+              jobTitle={jobTitle}
+              company={company}
               isMobile
             />
           </div>
@@ -161,7 +170,8 @@ export default function ProductCard({
         <Instructor
           avatar={avatar}
           instructor={instructor}
-          instructorTitle={instructorTitle}
+          jobTitle={jobTitle}
+          company={company}
         />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
