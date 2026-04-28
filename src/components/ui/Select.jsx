@@ -9,8 +9,8 @@ export default function Select({
   label,
   helperText,
   required,
-  wrapperClassName = '', // untuk div terluar (kontrol lebar)
-  className = '', // untuk trigger button
+  wrapperClassName = '',
+  className = '',
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
