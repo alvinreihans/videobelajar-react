@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import Navigation from '../components/Navigation';
+import Footer from '../components/Footer';
 
 export default function MainLayout({ children, type = 'main' }) {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export default function MainLayout({ children, type = 'main' }) {
     <>
       <Navigation variant={variant} />
       <main>{children}</main>
+      <Footer />
     </>
   );
 }
