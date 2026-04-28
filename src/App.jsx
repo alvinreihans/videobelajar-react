@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MainLayout from './layouts/MainLayout';
+import AuthLayout from './layouts/AuthLayout';
 
 function App() {
   return (
@@ -16,20 +17,22 @@ function App() {
             </MainLayout>
           }
         />
+
         <Route
           path="/login"
           element={
-            <MainLayout type="auth">
+            <AuthLayout>
               <Login />
-            </MainLayout>
+            </AuthLayout>
           }
         />
+
         <Route
           path="/register"
           element={
-            <MainLayout type="auth">
+            <AuthLayout>
               <Register />
-            </MainLayout>
+            </AuthLayout>
           }
         />
       </Routes>
