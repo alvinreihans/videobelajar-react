@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Lato', 'ui-sans-serif', 'system-ui'],
+        sans: ['var(--font-primary)', 'ui-sans-serif', 'system-ui'],
       },
       colors: {
         primary: {
@@ -102,6 +102,72 @@ export default {
           'gradient-warning': 'var(--gradient-warning)',
           'gradient-error': 'var(--gradient-error)',
         },
+      },
+      fontSize: {
+        h1: [
+          'var(--text-h1)',
+          {
+            lineHeight: 'var(--leading-heading)',
+            fontWeight: 'var(--fw-bold)',
+          },
+        ],
+        h2: [
+          'var(--text-h2)',
+          {
+            lineHeight: 'var(--leading-heading)',
+            fontWeight: 'var(--fw-bold)',
+          },
+        ],
+        h3: [
+          'var(--text-h3)',
+          {
+            lineHeight: 'var(--leading-heading)',
+            fontWeight: 'var(--fw-bold)',
+          },
+        ],
+        h4: [
+          'var(--text-h4)',
+          { lineHeight: '120%', fontWeight: 'var(--fw-bold)' },
+        ],
+        h5: [
+          'var(--text-h5)',
+          { lineHeight: '120%', fontWeight: 'var(--fw-bold)' },
+        ],
+        h6: [
+          'var(--text-h6)',
+          { lineHeight: '120%', fontWeight: 'var(--fw-bold)' },
+        ],
+
+        xl: [
+          'var(--text-xl)',
+          {
+            lineHeight: 'var(--leading-body)',
+            letterSpacing: 'var(--tracking-normal)',
+          },
+        ],
+        md: [
+          'var(--text-md)',
+          {
+            lineHeight: 'var(--leading-body)',
+            letterSpacing: 'var(--tracking-normal)',
+          },
+        ],
+        sm: [
+          'var(--text-sm)',
+          {
+            lineHeight: 'var(--leading-body)',
+            letterSpacing: 'var(--tracking-normal)',
+          },
+        ],
+      },
+      fontWeight: {
+        bold: 'var(--fw-bold)',
+        semibold: 'var(--fw-semibold)',
+        medium: 'var(--fw-medium)',
+        regular: 'var(--fw-regular)',
+      },
+      letterSpacing: {
+        normal: 'var(--tracking-normal)',
       },
     },
   },

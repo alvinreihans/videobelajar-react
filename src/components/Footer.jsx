@@ -68,12 +68,14 @@ export default function Footer() {
         <div className="flex flex-col gap-4 w-full md:max-w-[352px]">
           <img src="/logo.svg" className="w-[170px] md:w-[200px]" />
 
-          <div className="flex flex-col gap-2 text-text-dark-primary text-sm md:text-base">
+          <div className="flex flex-col gap-2 text-text-dark-primary text-sm md:text-base font-sans">
             <p className="font-bold md:text-lg">
               Gali Potensi Anda Melalui Pembelajaran Video di hariesok.id!
             </p>
-            <p>Jl. Usman Effendi No. 50 Lowokwaru, Malang</p>
-            <p>+62-877-7123-1234</p>
+            <p className="font-normal">
+              Jl. Usman Effendi No. 50 Lowokwaru, Malang
+            </p>
+            <p className="font-normal">+62-877-7123-1234</p>
           </div>
         </div>
 
@@ -86,32 +88,32 @@ export default function Footer() {
 
           {/* DESKTOP → GRID */}
           <div className="hidden md:flex gap-12">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 font-sans">
               <p className="font-bold">Kategori</p>
               <div className="flex flex-col gap-2 text-text-dark-secondary">
-                <span>Pemasaran</span>
-                <span>Desain</span>
-                <span>Pengembangan Diri</span>
-                <span>Bisnis</span>
+                <span className="font-normal">Pemasaran</span>
+                <span className="font-normal">Desain</span>
+                <span className="font-normal">Pengembangan Diri</span>
+                <span className="font-normal">Bisnis</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 font-sans">
               <p className="font-bold">Perusahaan</p>
               <div className="flex flex-col gap-2 text-text-dark-secondary">
-                <span>Tentang Kami</span>
-                <span>FAQ</span>
-                <span>Kebijakan Privasi</span>
-                <span>Ketentuan Layanan</span>
-                <span>Bantuan</span>
+                <span className="font-normal">Tentang Kami</span>
+                <span className="font-normal">FAQ</span>
+                <span className="font-normal">Kebijakan Privasi</span>
+                <span className="font-normal">Ketentuan Layanan</span>
+                <span className="font-normal">Bantuan</span>
               </div>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 font-sans">
               <p className="font-bold">Komunitas</p>
               <div className="flex flex-col gap-2 text-text-dark-secondary">
-                <span>Tips Sukses</span>
-                <span>Blog</span>
+                <span className="font-normal">Tips Sukses</span>
+                <span className="font-normal">Blog</span>
               </div>
             </div>
           </div>
@@ -146,7 +148,7 @@ export default function Footer() {
           </a>
         </div>
 
-        <p className="text-text-dark-secondary text-sm md:text-base order-2 md:order-1">
+        <p className="text-text-dark-secondary text-sm md:text-base order-2 md:order-1 font-sans">
           @2023 Gerobak Sayur All Rights Reserved.
         </p>
       </div>

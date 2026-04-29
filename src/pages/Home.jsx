@@ -185,25 +185,13 @@ export default function Home() {
         }}>
         <div className="flex flex-col items-center gap-3 w-full max-w-[280px] md:max-w-[720px]">
           {/* TITLE */}
-          <h1
-            className="
-        text-text-light-primary font-bold
-        text-2xl md:text-4xl
-        leading-[110%]
-      ">
+          <h1 className="text-text-light-primary text-h1 font-bold">
             Revolusi Pembelajaran: Temukan Ilmu Baru melalui Platform Video
             Interaktif!
           </h1>
 
           {/* DESC */}
-          <p
-            className="
-        text-text-light-primary
-        text-sm md:text-base
-        font-medium
-        leading-[140%]
-        tracking-[0.2px]
-      ">
+          <p className="text-text-light-primary text-xl font-medium leading-[140%] tracking-[0.2px]">
             Temukan ilmu baru yang menarik dan mendalam melalui koleksi video
             pembelajaran berkualitas tinggi. Tidak hanya itu, Anda juga dapat
             berpartisipasi dalam latihan interaktif yang akan meningkatkan
@@ -220,7 +208,7 @@ export default function Home() {
       w-full max-w-[280px]
       md:w-auto md:max-w-none
       rounded-[10px]
-      text-sm md:text-base
+      text-md
     ">
             Temukan Video Course untuk Dipelajari!
           </Button>
@@ -230,10 +218,10 @@ export default function Home() {
       {/* CARD SECTION */}
       <div className="w-full flex flex-col gap-8">
         <div className="flex flex-col gap-2.5">
-          <h2 className="text-text-dark-primary font-semibold text-[32px] leading-[110%]">
+          <h2 className="text-text-dark-primary text-h3 font-bold">
             Koleksi Video Pembelajaran Unggulan
           </h2>
-          <p className="text-text-dark-secondary text-base font-medium leading-[140%] tracking-[0.2px]">
+          <p className="text-text-dark-secondary text-md font-medium leading-[140%] tracking-[0.2px]">
             Jelajahi Dunia Pengetahuan Melalui Pilihan Kami!
           </p>
         </div>
@@ -248,7 +236,7 @@ export default function Home() {
                 onClick={() => setActiveTab(tab.id)}
                 className="flex flex-col items-start shrink-0 pr-9">
                 <span
-                  className={`py-3 text-base font-medium leading-[140%] tracking-[0.2px] transition-colors whitespace-nowrap ${
+                  className={`py-3 text-md font-medium leading-[140%] tracking-[0.2px] transition-colors whitespace-nowrap ${
                     isActive
                       ? 'text-tertiary'
                       : 'text-text-dark-secondary hover:text-text-dark-primary'
@@ -273,7 +261,7 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 text-text-dark-secondary">
+          <div className="text-center py-16 text-text-dark-secondary text-md font-normal">
             Belum ada kelas untuk kategori ini.
           </div>
         )}
@@ -294,29 +282,16 @@ export default function Home() {
         <div className="flex flex-col items-center gap-8 md:gap-10 w-full max-w-[525px]">
           {/* TEXT */}
           <div className="flex flex-col items-center gap-1 text-center">
-            <span className="text-text-light-secondary text-sm md:text-lg font-medium tracking-[0.2px]">
+            <span className="text-text-light-secondary text-md font-semibold tracking-[0.2px]">
               NEWSLETTER
             </span>
 
             <div className="flex flex-col items-center gap-2 md:gap-2.5">
-              <h2
-                className="
-          text-text-light-primary font-semibold
-          text-2xl md:text-[32px]
-          leading-[110%]
-        ">
+              <h2 className="text-text-light-primary text-h3 font-bold leading-[110%]">
                 Mau Belajar Lebih Banyak?
               </h2>
 
-              <p
-                className="
-          text-text-light-primary
-          text-sm md:text-base
-          leading-[140%]
-          tracking-[0.2px]
-          opacity-90
-          max-w-[280px] md:max-w-none
-        ">
+              <p className="text-text-light-primary text-md font-medium leading-[140%] tracking-[0.2px] opacity-90 max-w-[280px] md:max-w-none">
                 Daftarkan dirimu untuk mendapatkan informasi terbaru dan
                 penawaran spesial dari program-program terbaik hariesok.id
               </p>
@@ -341,7 +316,7 @@ export default function Home() {
                 placeholder="Masukkan Emailmu"
                 className="
             w-full outline-none bg-transparent
-            text-sm md:text-base
+            text-md
             text-text-dark-secondary
             tracking-[0.2px]
           "
@@ -355,7 +330,7 @@ export default function Home() {
               className="
           w-full
           rounded-[10px]
-          text-sm md:text-base
+          text-md
         ">
               Subscribe
             </Button>

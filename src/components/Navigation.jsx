@@ -121,13 +121,13 @@ export default function Navigation({ variant = 'guest' }) {
           {variant === 'guest' && (
             <>
               {/* BERANDA  */}
-              <div className="px-4 py-4 border-b border-border font-bold text-primary">
+              <div className="px-4 py-4 border-b border-border font-bold text-primary font-sans">
                 Beranda
               </div>
 
               {/* KATEGORI */}
               <Link to="/products">
-                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Kategori
                 </div>
               </Link>
@@ -157,28 +157,28 @@ export default function Navigation({ variant = 'guest' }) {
           {variant === 'user' && (
             <>
               <Link to="/products">
-                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Kategori
                 </div>
               </Link>
               <Link to="/profile">
-                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Profil Saya
                 </div>
               </Link>
               <Link to="/class">
-                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Kelas Saya
                 </div>
               </Link>
               <Link to="/orders">
-                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Pesanan Saya
                 </div>
               </Link>
               <button
                 onClick={logout}
-                className="w-full flex items-center gap-2 px-4 py-4 text-error">
+                className="w-full flex items-center gap-2 px-4 py-4 text-error font-sans">
                 Keluar
                 <img src="/icon-logout.svg" className="w-5 h-5" />
               </button>

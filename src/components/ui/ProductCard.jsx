@@ -132,8 +132,8 @@ export default function ProductCard({
               alt={title}
               className="w-[82px] h-[82px] rounded-[10px] object-cover shrink-0"
             />
-            <div className="flex flex-col gap-2 flex-1 min-w-0">
-              <h3 className="font-semibold text-text-dark-primary text-base leading-[120%] line-clamp-2">
+            <div className="flex flex-col gap-2 flex-1 min-w-0 font-sans">
+              <h3 className="font-semibold text-text-dark-primary text-xl leading-[120%] line-clamp-2">
                 {title}
               </h3>
               <Instructor
@@ -167,11 +167,11 @@ export default function ProductCard({
             alt={title}
             className="w-full h-[193px] rounded-[10px] object-cover"
           />
-          <div className="flex flex-col gap-2">
-            <h3 className="font-semibold text-text-dark-primary text-[18px] leading-[120%] line-clamp-1">
+          <div className="flex flex-col gap-2 font-sans">
+            <h3 className="font-semibold text-xl text-text-dark-primary leading-[120%] line-clamp-1">
               {title}
             </h3>
-            <p className="text-base font-medium text-text-dark-secondary leading-[140%] tracking-[0.2px] line-clamp-2">
+            <p className="text-md font-medium text-text-dark-secondary leading-[140%] tracking-[0.2px] line-clamp-2">
               {description}
             </p>
           </div>

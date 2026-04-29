@@ -1,4 +1,5 @@
 :root {
+  /* COLORS */
   /* ================= PRIMARY ================= */
   --primary: #3ecf4c;
   --primary-400: #6be26b;
@@ -83,4 +84,39 @@
     rgba(255, 229, 128, 0.21) 100%
   );
   --gradient-error: linear-gradient(286.17deg, #ff3333 36.98%, #ff8a9b 100%);
+
+  /* FONTS */
+  /* ================= FONT FAMILY ================= */
+  --font-primary: 'Lato', sans-serif;
+
+  /* ================= HEADING ================= */
+  --text-h1: 48px;
+  --text-h2: 40px;
+  --text-h3: 32px;
+  --text-h4: 24px;
+  --text-h5: 20px;
+  --text-h6: 18px;
+
+  --leading-heading: 110%;
+
+  /* ================= BODY ================= */
+  --text-xl: 18px;
+  --text-md: 16px;
+  --text-sm: 14px;
+
+  --leading-body: 140%;
+
+  /* ================= FONT WEIGHT ================= */
+  --fw-bold: 700;
+  --fw-semibold: 600;
+  --fw-medium: 500;
+  --fw-regular: 400;
+
+  /* ================= LETTER SPACING ================= */
+  --tracking-normal: 0.2px;
+}
+
+html,
+body {
+  font-family: var(--font-primary);
 }

@@ -16,7 +16,7 @@ export default function PhoneInput({ label, required, value, onChange }) {
     <div className="flex flex-col gap-1.5 w-full">
       {/* LABEL */}
       {label && (
-        <p className="text-sm text-text-dark-secondary">
+        <p className="text-sm text-text-dark-secondary font-sans leading-[140%]">
           {label}
           {required && <span className="text-tertiary ml-1">*</span>}
         </p>
@@ -30,13 +30,13 @@ export default function PhoneInput({ label, required, value, onChange }) {
           onChange={setCountry}
           wrapperClassName="w-[130px] shrink-0" // ← pakai wrapperClassName
           renderOption={(opt) => (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 font-sans">
               <img src={opt.flag} className="w-5 h-4 object-cover rounded-sm" />
               <span>{opt.code}</span>
             </div>
           )}
           renderValue={(opt) => (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 font-sans">
               <img src={opt.flag} className="w-5 h-4 object-cover rounded-sm" />
               <span>{opt.code}</span>
             </div>

@@ -27,10 +27,10 @@ export default function Register() {
       <div className="w-full max-w-[590px] bg-background-primary border border-border rounded-md p-9 flex flex-col gap-9">
         {/* HEADER */}
         <div className="text-center flex flex-col gap-2">
-          <h1 className="text-[32px] font-semibold text-text-dark-primary">
+          <h1 className="text-h3 font-bold text-text-dark-primary">
             Pendaftaran Akun
           </h1>
-          <p className="text-text-dark-secondary">
+          <p className="text-text-dark-secondary text-md font-medium">
             Yuk, daftarkan akunmu sekarang juga!
           </p>
         </div>

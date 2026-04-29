@@ -17,7 +17,7 @@ export default function Input({
     <div className={`flex flex-col gap-1.5 w-full ${className}`}>
       {/* LABEL */}
       {label && (
-        <p className="text-sm text-text-dark-secondary">
+        <p className="text-sm text-text-dark-secondary font-sans">
           {label}
           {required && <span className="text-tertiary ml-1">*</span>}
         </p>
@@ -28,7 +28,7 @@ export default function Input({
         <input
           type={inputType}
           placeholder={placeholder}
-          className="flex-1 outline-none text-text-dark-primary placeholder:text-text-dark-disabled bg-transparent text-sm"
+          className="flex-1 outline-none text-text-dark-primary placeholder:text-text-dark-disabled bg-transparent text-md leading-[140%] font-sans"
           {...props}
         />
         {/* PASSWORD TOGGLE */}
@@ -44,7 +44,9 @@ export default function Input({
 
       {/* HELPER TEXT */}
       {helperText && (
-        <p className="text-xs text-text-dark-secondary">{helperText}</p>
+        <p className="text-sm text-text-dark-secondary font-sans leading-[140%]">
+          {helperText}
+        </p>
       )}
     </div>
   );

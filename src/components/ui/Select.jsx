@@ -28,7 +28,7 @@ export default function Select({
     <div className={`flex flex-col gap-1.5 ${wrapperClassName}`} ref={ref}>
       {/* LABEL */}
       {label && (
-        <p className="text-sm text-text-dark-secondary">
+        <p className="text-sm text-text-dark-secondary font-sans">
           {label}
           {required && <span className="text-tertiary ml-1">*</span>}
         </p>
@@ -38,13 +38,15 @@ export default function Select({
         {/* TRIGGER */}
         <div
           onClick={() => setOpen(!open)}
-          className={`h-12 px-3 flex items-center justify-between cursor-pointer border rounded-md bg-background-primary shadow-sm transition-colors text-sm ${
+          className={`h-12 px-3 flex items-center justify-between cursor-pointer border rounded-md bg-background-primary shadow-sm transition-colors text-sm font-sans ${
             open ? 'border-primary' : 'border-border'
           } ${className}`}>
           {renderValue ? (
             renderValue(selected)
           ) : (
-            <span className="text-text-dark-primary">{selected?.label}</span>
+            <span className="text-text-dark-primary text-md font-sans">
+              {selected?.label}
+            </span>
           )}
           <span
             className={`text-[10px] text-text-dark-secondary ml-2 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}>
@@ -64,13 +66,13 @@ export default function Select({
                   onChange(option);
                   setOpen(false);
                 }}
-                className={`px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors text-sm text-text-dark-primary ${
+                className={`px-3 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors text-sm text-text-dark-primary font-sans ${
                   selected?.value === option.value ? 'bg-primary/5' : ''
                 }`}>
                 {renderOption ? (
                   renderOption(option)
                 ) : (
-                  <span>{option.label}</span>
+                  <span className="font-sans">{option.label}</span>
                 )}
               </div>
             ))}
@@ -80,7 +82,9 @@ export default function Select({
 
       {/* HELPER TEXT */}
       {helperText && (
-        <p className="text-xs text-text-dark-secondary">{helperText}</p>
+        <p className="text-xs text-text-dark-secondary font-sans">
+          {helperText}
+        </p>
       )}
     </div>
   );

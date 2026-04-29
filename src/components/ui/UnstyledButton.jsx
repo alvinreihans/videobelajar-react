@@ -8,11 +8,11 @@ export default function UnstyledButton({
   ...props
 }) {
   const sizes = {
-    md: 'text-sm px-4 py-1.5',
-    lg: 'text-base px-6 py-2',
+    md: 'text-md px-4 py-1.5',
+    lg: 'text-xl px-6 py-2',
   };
 
-  const base = 'inline-flex items-center gap-2 font-bold';
+  const base = 'inline-flex items-center gap-2 font-sans font-bold';
 
   return (
     <Component

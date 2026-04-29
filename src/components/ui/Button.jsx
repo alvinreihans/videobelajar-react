@@ -12,7 +12,7 @@ export default function Button({
   ...props
 }) {
   const base =
-    'inline-flex items-center justify-center rounded-lg transition overflow-hidden';
+    'inline-flex items-center justify-center rounded-lg transition overflow-hidden font-sans';
 
   const styles = {
     primary: {

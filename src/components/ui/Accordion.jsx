@@ -13,7 +13,7 @@ export function Accordion({ items = [], defaultOpen = null }) {
             {/* HEADER */}
             <button
               onClick={() => setOpen(isOpen ? null : item.key)}
-              className="w-full flex justify-between items-center py-3 text-left">
+              className="w-full flex justify-between items-center py-3 text-left text-md font-sans">
               <span className="font-bold">{item.title}</span>
 
               <img
@@ -31,7 +31,7 @@ export function Accordion({ items = [], defaultOpen = null }) {
               className={`overflow-hidden transition-all duration-300 ${
                 isOpen ? 'max-h-40 pb-3' : 'max-h-0'
               }`}>
-              <div className="flex flex-col gap-2 text-text-dark-secondary text-sm">
+              <div className="flex flex-col gap-2 text-text-dark-secondary text-sm leading-[140%] font-sans">
                 {item.content}
               </div>
             </div>
