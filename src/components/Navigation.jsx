@@ -42,11 +42,11 @@ export default function Navigation({ variant = 'guest' }) {
         {/* DESKTOP */}
         <div className="hidden md:flex items-center gap-6">
           {current.showNav && (
-            <a href="#courses">
+            <Link to="/products">
               <UnstyledButton className="text-text-dark-secondary font-medium">
                 Kategori
               </UnstyledButton>
-            </a>
+            </Link>
           )}
 
           {current.showButtons && (
@@ -73,15 +73,21 @@ export default function Navigation({ variant = 'guest' }) {
               {isDropdownOpen && (
                 <div className="absolute right-0 mt-3 w-[200px] bg-white border border-border shadow-lg rounded-md overflow-hidden z-50">
                   {/* ITEM */}
-                  <Link className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
+                  <Link
+                    to="/profile"
+                    className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
                     Profil Saya
                   </Link>
 
-                  <Link className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
+                  <Link
+                    to="/class"
+                    className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
                     Kelas Saya
                   </Link>
 
-                  <Link className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
+                  <Link
+                    to="/orders"
+                    className="block px-3 py-4 text-text-dark-secondary hover:bg-gray-50">
                     Pesanan Saya
                   </Link>
 
@@ -120,9 +126,11 @@ export default function Navigation({ variant = 'guest' }) {
               </div>
 
               {/* KATEGORI */}
-              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-                Kategori
-              </div>
+              <Link to="/products">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                  Kategori
+                </div>
+              </Link>
 
               {/* BUTTON SECTION */}
               <div className="p-3 flex flex-col gap-2">
@@ -148,22 +156,26 @@ export default function Navigation({ variant = 'guest' }) {
           {/* ===== USER MODE ===== */}
           {variant === 'user' && (
             <>
-              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-                Kategori
-              </div>
-
-              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-                Profil Saya
-              </div>
-
-              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-                Kelas Saya
-              </div>
-
-              <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
-                Pesanan Saya
-              </div>
-
+              <Link to="/products">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                  Kategori
+                </div>
+              </Link>
+              <Link to="/profile">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                  Profil Saya
+                </div>
+              </Link>
+              <Link to="/class">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                  Kelas Saya
+                </div>
+              </Link>
+              <Link to="/orders">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary">
+                  Pesanan Saya
+                </div>
+              </Link>
               <button
                 onClick={logout}
                 className="w-full flex items-center gap-2 px-4 py-4 text-error">

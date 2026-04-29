@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../components/ui/Input';
 import Divider from '../components/ui/Divider';
@@ -68,13 +68,15 @@ export default function Login() {
               Masuk
             </Button>
 
-            <Button
-              variant="shadow"
-              color="primary"
-              className="w-full"
-              onClick={() => navigate('/register')}>
-              Daftar
-            </Button>
+            <Link to="/register">
+              <Button
+                type="button"
+                variant="shadow"
+                color="primary"
+                className="w-full">
+                Daftar
+              </Button>
+            </Link>
           </div>
 
           <Divider text="atau" />

@@ -131,10 +131,19 @@ export default function Footer() {
         md:flex-row md:justify-between md:items-center
       ">
         <div className="flex gap-3 order-1 md:order-2">
-          <SocialIcon src="/icon-linkedin.svg" alt="LinkedIn" />
-          <SocialIcon src="/icon-facebook.svg" alt="Facebook" />
-          <SocialIcon src="/icon-instagram.svg" alt="Instagram" />
-          <SocialIcon src="/icon-twitter.svg" alt="Twitter" />
+          <a href="https://www.linkedin.com/">
+            <SocialIcon src="/icon-linkedin.svg" alt="LinkedIn" />
+          </a>
+          <a href="https://www.facebook.com/">
+            <SocialIcon src="/icon-facebook.svg" alt="Facebook" />
+          </a>
+          <a href="https://www.instagram.com/">
+            {' '}
+            <SocialIcon src="/icon-instagram.svg" alt="Instagram" />
+          </a>
+          <a href="https://www.x.com/">
+            <SocialIcon src="/icon-twitter.svg" alt="Twitter" />
+          </a>
         </div>
 
         <p className="text-text-dark-secondary text-sm md:text-base order-2 md:order-1">

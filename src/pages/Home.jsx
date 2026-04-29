@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ProductCard from '../components/ui/ProductCard';
 import Button from '../components/ui/Button';
+import { Link } from 'react-router-dom';
 
 const TABS = [
   { id: 'semua', label: 'Semua Kelas' },
@@ -211,17 +212,19 @@ export default function Home() {
         </div>
 
         {/* BUTTON */}
-        <Button
-          color="primary"
-          variant="contained"
-          className="
+        <Link to="/products">
+          <Button
+            color="primary"
+            variant="contained"
+            className="
       w-full max-w-[280px]
       md:w-auto md:max-w-none
       rounded-[10px]
       text-sm md:text-base
     ">
-          Temukan Video Course untuk Dipelajari!
-        </Button>
+            Temukan Video Course untuk Dipelajari!
+          </Button>
+        </Link>
       </div>
 
       {/* CARD SECTION */}

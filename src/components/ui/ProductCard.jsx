@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 // ─── STARS ────────────────────────────────────────────────────────────────────
 
 const StarFull = () => (
@@ -104,6 +106,7 @@ function Instructor({
 // ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
 
 export default function ProductCard({
+  id,
   title,
   description,
   instructor,
@@ -118,71 +121,77 @@ export default function ProductCard({
   className = '',
 }) {
   return (
-    <div
-      className={`bg-background-primary border border-border rounded-[10px] ${className}`}>
-      {/* MOBILE */}
-      <div className="flex flex-col gap-2 p-4 md:hidden">
-        <div className="flex gap-3">
-          <img
-            src={image}
-            alt={title}
-            className="w-[82px] h-[82px] rounded-[10px] object-cover shrink-0"
-          />
-          <div className="flex flex-col gap-2 flex-1 min-w-0">
-            <h3 className="font-semibold text-text-dark-primary text-base leading-[120%] line-clamp-2">
-              {title}
-            </h3>
-            <Instructor
-              avatar={avatar}
-              instructor={instructor}
-              jobTitle={jobTitle}
-              company={company}
+    <Link to={`/product/${id}`} className="block">
+      <div
+        className={`bg-background-primary border border-border rounded-[10px] ${className}`}>
+        {/* MOBILE */}
+        <div className="flex flex-col gap-2 p-4 md:hidden">
+          <div className="flex gap-3">
+            <img
+              src={image}
+              alt={title}
+              className="w-[82px] h-[82px] rounded-[10px] object-cover shrink-0"
+            />
+            <div className="flex flex-col gap-2 flex-1 min-w-0">
+              <h3 className="font-semibold text-text-dark-primary text-base leading-[120%] line-clamp-2">
+                {title}
+              </h3>
+              <Instructor
+                avatar={avatar}
+                instructor={instructor}
+                jobTitle={jobTitle}
+                company={company}
+                isMobile
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <StarRating rating={rating} />
+              <span className="text-[12px] font-medium text-text-dark-secondary underline tracking-[0.2px]">
+                {rating} ({students})
+              </span>
+            </div>
+            <PriceSection
+              price={price}
+              originalPrice={originalPrice}
               isMobile
             />
           </div>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <StarRating rating={rating} />
-            <span className="text-[12px] font-medium text-text-dark-secondary underline tracking-[0.2px]">
-              {rating} ({students})
-            </span>
-          </div>
-          <PriceSection price={price} originalPrice={originalPrice} isMobile />
-        </div>
-      </div>
 
-      {/* DESKTOP */}
-      <div className="hidden md:flex flex-col gap-4 p-5">
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-[193px] rounded-[10px] object-cover"
-        />
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-text-dark-primary text-[18px] leading-[120%] line-clamp-1">
-            {title}
-          </h3>
-          <p className="text-base font-medium text-text-dark-secondary leading-[140%] tracking-[0.2px] line-clamp-2">
-            {description}
-          </p>
-        </div>
-        <Instructor
-          avatar={avatar}
-          instructor={instructor}
-          jobTitle={jobTitle}
-          company={company}
-        />
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <StarRating rating={rating} />
-            <span className="text-sm font-medium text-text-dark-secondary underline tracking-[0.2px]">
-              {rating} ({students})
-            </span>
+        {/* DESKTOP */}
+        <div className="hidden md:flex flex-col gap-4 p-5">
+          <img
+            src={image}
+            alt={title}
+            className="w-full h-[193px] rounded-[10px] object-cover"
+          />
+          <div className="flex flex-col gap-2">
+            <h3 className="font-semibold text-text-dark-primary text-[18px] leading-[120%] line-clamp-1">
+              {title}
+            </h3>
+            <p className="text-base font-medium text-text-dark-secondary leading-[140%] tracking-[0.2px] line-clamp-2">
+              {description}
+            </p>
           </div>
-          <PriceSection price={price} originalPrice={originalPrice} />
+          <Instructor
+            avatar={avatar}
+            instructor={instructor}
+            jobTitle={jobTitle}
+            company={company}
+          />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <StarRating rating={rating} />
+              <span className="text-sm font-medium text-text-dark-secondary underline tracking-[0.2px]">
+                {rating} ({students})
+              </span>
+            </div>
+            <PriceSection price={price} originalPrice={originalPrice} />
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
