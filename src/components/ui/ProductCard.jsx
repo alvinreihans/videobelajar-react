@@ -119,9 +119,20 @@ export default function ProductCard({
   image,
   avatar,
   className = '',
+  to,
+  actions,
 }) {
+  // `to === null` disables navigation (dipakai di halaman kelola kelas).
+  const resolvedTo = to === undefined ? `/product/${id}` : to;
+  const clickable = resolvedTo !== null;
+
+  const Wrapper = clickable ? Link : 'div';
+  const wrapperProps = clickable
+    ? { to: resolvedTo, className: 'block' }
+    : { className: 'block' };
+
   return (
-    <Link to={`/product/${id}`} className="block">
+    <Wrapper {...wrapperProps}>
       <div
         className={`bg-background-primary border border-border rounded-[10px] ${className}`}>
         {/* MOBILE */}
@@ -191,7 +202,14 @@ export default function ProductCard({
             <PriceSection price={price} originalPrice={originalPrice} />
           </div>
         </div>
+
+        {/* ACTIONS (Edit / Hapus) — hanya muncul di halaman kelola kelas */}
+        {actions && (
+          <div className="flex items-center gap-2 px-4 pb-4 md:px-5 md:pb-5">
+            {actions}
+          </div>
+        )}
       </div>
-    </Link>
+    </Wrapper>
   );
 }

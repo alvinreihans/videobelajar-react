@@ -42,11 +42,18 @@ export default function Navigation({ variant = 'guest' }) {
         {/* DESKTOP */}
         <div className="hidden md:flex items-center gap-6">
           {current.showNav && (
-            <Link to="/products">
-              <UnstyledButton className="text-text-dark-secondary font-medium">
-                Kategori
-              </UnstyledButton>
-            </Link>
+            <>
+              <Link to="/products">
+                <UnstyledButton className="text-text-dark-secondary font-medium">
+                  Kategori
+                </UnstyledButton>
+              </Link>
+              <Link to="/kelola-kelas">
+                <UnstyledButton className="text-text-dark-secondary font-medium">
+                  Kelola Kelas
+                </UnstyledButton>
+              </Link>
+            </>
           )}
 
           {current.showButtons && (
@@ -132,6 +139,13 @@ export default function Navigation({ variant = 'guest' }) {
                 </div>
               </Link>
 
+              {/* KELOLA KELAS */}
+              <Link to="/kelola-kelas">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
+                  Kelola Kelas
+                </div>
+              </Link>
+
               {/* BUTTON SECTION */}
               <div className="p-3 flex flex-col gap-2">
                 <Link to="/login">
@@ -159,6 +173,11 @@ export default function Navigation({ variant = 'guest' }) {
               <Link to="/products">
                 <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
                   Kategori
+                </div>
+              </Link>
+              <Link to="/kelola-kelas">
+                <div className="px-4 py-4 border-b border-border text-text-dark-secondary font-sans">
+                  Kelola Kelas
                 </div>
               </Link>
               <Link to="/profile">
