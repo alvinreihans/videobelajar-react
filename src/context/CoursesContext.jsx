@@ -1,48 +1,62 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { initialCourses } from '../data/courses';
+import * as courseApi from '../services/api/courseService';
 
 const CoursesContext = createContext();
 
-const STORAGE_KEY = 'courses';
-
 export function CoursesProvider({ children }) {
-  // Ambil dari localStorage jika ada, kalau tidak pakai seed data awal.
-  const [courses, setCourses] = useState(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : initialCourses;
-  });
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Setiap kali courses berubah, simpan ke localStorage.
+  // ─── GET — ambil data dari MockAPI saat pertama render ────────────────────
+  const fetchCourses = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await courseApi.getCourses();
+      setCourses(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
-  }, [courses]);
+    fetchCourses();
+  }, []);
 
-  // ─── CREATE ──────────────────────────────────────────────────────────────
-  const addCourse = (data) => {
-    setCourses((prev) => {
-      const nextId = prev.reduce((max, c) => Math.max(max, c.id), 0) + 1;
-      return [{ id: nextId, ...data }, ...prev];
-    });
+  // ─── ADD — POST lalu masukkan hasilnya ke state ───────────────────────────
+  const addCourse = async (data) => {
+    const created = await courseApi.createCourse(data);
+    setCourses((prev) => [created, ...prev]);
+    return created;
   };
 
-  // ─── UPDATE ──────────────────────────────────────────────────────────────
-  const updateCourse = (id, data) => {
-    setCourses((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, ...data } : c))
-    );
+  // ─── UPDATE — PUT lalu ganti item di state ────────────────────────────────
+  const updateCourse = async (id, data) => {
+    const updated = await courseApi.updateCourse(id, data);
+    setCourses((prev) => prev.map((c) => (c.id === id ? updated : c)));
+    return updated;
   };
 
-  // ─── DELETE ──────────────────────────────────────────────────────────────
-  const deleteCourse = (id) => {
+  // ─── DELETE — hapus di server lalu buang dari state ───────────────────────
+  const deleteCourse = async (id) => {
+    await courseApi.deleteCourse(id);
     setCourses((prev) => prev.filter((c) => c.id !== id));
   };
 
-  // Kembalikan ke data awal (opsional, berguna untuk reset).
-  const resetCourses = () => setCourses(initialCourses);
-
   return (
     <CoursesContext.Provider
-      value={{ courses, addCourse, updateCourse, deleteCourse, resetCourses }}>
+      value={{
+        courses,
+        loading,
+        error,
+        refetch: fetchCourses,
+        addCourse,
+        updateCourse,
+        deleteCourse,
+      }}>
       {children}
     </CoursesContext.Provider>
   );
