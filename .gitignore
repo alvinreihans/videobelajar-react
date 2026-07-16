@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Env (jangan commit .env asli; .env.example tetap di-track)
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

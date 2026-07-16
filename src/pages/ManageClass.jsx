@@ -6,8 +6,16 @@ import { useCourses } from '../context/CoursesContext';
 import { TABS } from '../data/courses';
 
 export default function ManageClass() {
-  // ─── STATE GLOBAL (dibagi dengan Home lewat Context) ─────────────────────
-  const { courses, addCourse, updateCourse, deleteCourse } = useCourses();
+  // ─── STATE GLOBAL (dari MockAPI via Context) ─────────────────────────────
+  const {
+    courses,
+    loading,
+    error,
+    refetch,
+    addCourse,
+    updateCourse,
+    deleteCourse,
+  } = useCourses();
 
   const [activeTab, setActiveTab] = useState('semua');
 
@@ -15,6 +23,8 @@ export default function ManageClass() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editing, setEditing] = useState(null); // null = mode tambah
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [actionError, setActionError] = useState(null);
 
   // ─── READ ────────────────────────────────────────────────────────────────
   const filtered =
@@ -22,20 +32,29 @@ export default function ManageClass() {
       ? courses
       : courses.filter((c) => c.category === activeTab);
 
-  // ─── CREATE / UPDATE ─────────────────────────────────────────────────────
-  const handleSubmit = (data) => {
+  // ─── CREATE / UPDATE (async) ─────────────────────────────────────────────
+  // Melempar error agar modal bisa menampilkannya & tetap terbuka bila gagal.
+  const handleSubmit = async (data) => {
     if (editing) {
-      updateCourse(editing.id, data);
+      await updateCourse(editing.id, data);
     } else {
-      addCourse(data);
+      await addCourse(data);
     }
     closeModal();
   };
 
-  // ─── DELETE ──────────────────────────────────────────────────────────────
-  const handleDelete = () => {
-    deleteCourse(deleteTarget.id);
-    setDeleteTarget(null);
+  // ─── DELETE (async) ──────────────────────────────────────────────────────
+  const handleDelete = async () => {
+    setActionError(null);
+    setDeleting(true);
+    try {
+      await deleteCourse(deleteTarget.id);
+      setDeleteTarget(null);
+    } catch (err) {
+      setActionError(err.message);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // ─── MODAL HELPERS ───────────────────────────────────────────────────────
@@ -113,8 +132,32 @@ export default function ManageClass() {
         })}
       </div>
 
-      {/* GRID */}
-      {filtered.length > 0 ? (
+      {/* ERROR SAAT AKSI HAPUS */}
+      {actionError && (
+        <div className="rounded-[10px] bg-error-bg text-error px-4 py-3 text-md font-medium">
+          {actionError}
+        </div>
+      )}
+
+      {/* CONTENT: loading / error / grid */}
+      {loading ? (
+        <div className="text-center py-16 text-text-dark-secondary text-md font-medium">
+          Memuat data kelas…
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center gap-4 text-center py-16">
+          <p className="text-md font-medium text-error">
+            Gagal memuat data: {error}
+          </p>
+          <Button
+            color="info"
+            variant="outlined"
+            onClick={refetch}
+            className="rounded-[10px]">
+            Coba Lagi
+          </Button>
+        </div>
+      ) : filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filtered.map((course) => (
             <ProductCard
@@ -170,7 +213,7 @@ export default function ManageClass() {
       {deleteTarget && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4"
-          onClick={() => setDeleteTarget(null)}>
+          onClick={() => (deleting ? null : setDeleteTarget(null))}>
           <div
             className="w-full max-w-[400px] bg-background-primary rounded-[10px] shadow-lg p-6 flex flex-col gap-4"
             onClick={(e) => e.stopPropagation()}>
@@ -188,6 +231,7 @@ export default function ManageClass() {
               <Button
                 color="info"
                 variant="outlined"
+                disabled={deleting}
                 onClick={() => setDeleteTarget(null)}
                 className="rounded-[10px]">
                 Batal
@@ -195,9 +239,10 @@ export default function ManageClass() {
               <Button
                 color="tertiary"
                 variant="contained"
+                disabled={deleting}
                 onClick={handleDelete}
                 className="rounded-[10px]">
-                Ya, Hapus
+                {deleting ? 'Menghapus…' : 'Ya, Hapus'}
               </Button>
             </div>
           </div>

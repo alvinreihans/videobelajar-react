@@ -41,6 +41,8 @@ export default function CourseFormModal({ initialData, onSubmit, onClose }) {
       : EMPTY_FORM
   );
   const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const setField = (name, value) =>
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -54,18 +56,26 @@ export default function CourseFormModal({ initialData, onSubmit, onClose }) {
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
 
-    onSubmit({
-      ...form,
-      title: form.title.trim(),
-      instructor: form.instructor.trim(),
-      rating: parseFloat(form.rating) || 0,
-      originalPrice: form.originalPrice.trim() || null,
-      students: form.students.trim() || '0',
-    });
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      // onSubmit memanggil API (async). Modal ditutup parent bila sukses.
+      await onSubmit({
+        ...form,
+        title: form.title.trim(),
+        instructor: form.instructor.trim(),
+        rating: parseFloat(form.rating) || 0,
+        originalPrice: form.originalPrice.trim() || null,
+        students: form.students.trim() || '0',
+      });
+    } catch (err) {
+      setSubmitError(err.message || 'Gagal menyimpan data');
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -213,12 +223,20 @@ export default function CourseFormModal({ initialData, onSubmit, onClose }) {
             />
           </div>
 
+          {/* ERROR API */}
+          {submitError && (
+            <div className="rounded-md bg-error-bg text-error px-3 py-2 text-sm font-medium">
+              {submitError}
+            </div>
+          )}
+
           {/* ACTIONS */}
           <div className="flex items-center justify-end gap-3 pt-2">
             <Button
               type="button"
               color="tertiary"
               variant="outlined"
+              disabled={submitting}
               onClick={onClose}
               className="rounded-[10px]">
               Batal
@@ -227,8 +245,13 @@ export default function CourseFormModal({ initialData, onSubmit, onClose }) {
               type="submit"
               color="primary"
               variant="contained"
+              disabled={submitting}
               className="rounded-[10px]">
-              {isEdit ? 'Simpan Perubahan' : 'Tambah Kelas'}
+              {submitting
+                ? 'Menyimpan…'
+                : isEdit
+                  ? 'Simpan Perubahan'
+                  : 'Tambah Kelas'}
             </Button>
           </div>
         </form>

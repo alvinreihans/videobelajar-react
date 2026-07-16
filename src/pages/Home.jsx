@@ -6,7 +6,7 @@ import { useCourses } from '../context/CoursesContext';
 import { TABS } from '../data/courses';
 
 export default function Home() {
-  const { courses } = useCourses();
+  const { courses, loading, error } = useCourses();
   const [activeTab, setActiveTab] = useState('semua');
   const [email, setEmail] = useState('');
 
@@ -102,7 +102,15 @@ export default function Home() {
         </div>
 
         {/* Grid */}
-        {filtered.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-16 text-text-dark-secondary text-md font-normal">
+            Memuat kelas…
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 text-error text-md font-medium">
+            Gagal memuat kelas: {error}
+          </div>
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filtered.map((course) => (
               <ProductCard key={course.id} {...course} />
