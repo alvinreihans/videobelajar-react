@@ -2,11 +2,14 @@ import { useState } from 'react';
 import ProductCard from '../components/ui/ProductCard';
 import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
-import { useCourses } from '../context/CoursesContext';
+import { useSelector } from 'react-redux';
 import { TABS } from '../data/courses';
 
 export default function Home() {
-  const { courses, loading, error } = useCourses();
+  // Ambil data kelas dari Redux store.
+  const { items: courses, loading, error } = useSelector(
+    (state) => state.courses
+  );
   const [activeTab, setActiveTab] = useState('semua');
   const [email, setEmail] = useState('');
 

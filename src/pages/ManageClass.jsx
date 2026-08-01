@@ -1,21 +1,22 @@
 import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ProductCard from '../components/ui/ProductCard';
 import Button from '../components/ui/Button';
 import CourseFormModal from '../components/CourseFormModal';
-import { useCourses } from '../context/CoursesContext';
+import {
+  fetchCourses,
+  addCourse,
+  editCourse,
+  removeCourse,
+} from '../store/redux/coursesSlice';
 import { TABS } from '../data/courses';
 
 export default function ManageClass() {
-  // ─── STATE GLOBAL (dari MockAPI via Context) ─────────────────────────────
-  const {
-    courses,
-    loading,
-    error,
-    refetch,
-    addCourse,
-    updateCourse,
-    deleteCourse,
-  } = useCourses();
+  // ─── STATE GLOBAL (dari MockAPI via Redux) ───────────────────────────────
+  const dispatch = useDispatch();
+  const { items: courses, loading, error } = useSelector(
+    (state) => state.courses
+  );
 
   const [activeTab, setActiveTab] = useState('semua');
 
@@ -32,23 +33,23 @@ export default function ManageClass() {
       ? courses
       : courses.filter((c) => c.category === activeTab);
 
-  // ─── CREATE / UPDATE (async) ─────────────────────────────────────────────
-  // Melempar error agar modal bisa menampilkannya & tetap terbuka bila gagal.
+  // ─── CREATE / UPDATE (async, via Redux thunk) ────────────────────────────
+  // .unwrap() melempar error agar modal menampilkannya & tetap terbuka.
   const handleSubmit = async (data) => {
     if (editing) {
-      await updateCourse(editing.id, data);
+      await dispatch(editCourse({ id: editing.id, data })).unwrap();
     } else {
-      await addCourse(data);
+      await dispatch(addCourse(data)).unwrap();
     }
     closeModal();
   };
 
-  // ─── DELETE (async) ──────────────────────────────────────────────────────
+  // ─── DELETE (async, via Redux thunk) ─────────────────────────────────────
   const handleDelete = async () => {
     setActionError(null);
     setDeleting(true);
     try {
-      await deleteCourse(deleteTarget.id);
+      await dispatch(removeCourse(deleteTarget.id)).unwrap();
       setDeleteTarget(null);
     } catch (err) {
       setActionError(err.message);
@@ -152,7 +153,7 @@ export default function ManageClass() {
           <Button
             color="info"
             variant="outlined"
-            onClick={refetch}
+            onClick={() => dispatch(fetchCourses())}
             className="rounded-[10px]">
             Coba Lagi
           </Button>
