@@ -1,0 +1,24 @@
+{
+  "name": "videobelajar-backend",
+  "version": "1.0.0",
+  "description": "REST API backend (Express.js + MySQL) untuk aplikasi Video Belajar / Edu Course — Mission Intermediate Backend 1A",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:schema": "node scripts/runSql.js db/schema.sql",
+    "db:seed": "node scripts/runSql.js db/seed.sql",
+    "db:reset": "node scripts/runSql.js db/schema.sql && node scripts/runSql.js db/seed.sql"
+  },
+  "keywords": ["express", "mysql", "rest-api", "videobelajar", "edu-course"],
+  "author": "Alvin Makarim",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.5"
+  }
+}
