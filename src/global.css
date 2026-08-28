@@ -120,3 +120,27 @@ html,
 body {
   font-family: var(--font-primary);
 }
+
+/* ================= PRINT (Sertifikat) ================= */
+/* Saat mencetak halaman Sertifikat, sembunyikan seluruh chrome (nav, footer,
+   tombol) dan hanya tampilkan area #certificate. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #certificate,
+  #certificate * {
+    visibility: visible;
+  }
+  #certificate {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

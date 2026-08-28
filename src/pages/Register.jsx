@@ -1,29 +1,37 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Input from '../components/ui/Input';
 import Divider from '../components/ui/Divider';
-import Select from '../components/ui/Select';
 import Button from '../components/ui/Button';
 import UnstyledButton from '../components/ui/UnstyledButton';
 import PhoneInput from '../components/ui/PhoneInput';
 
 export default function Register() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleRegister = (e) => {
     e.preventDefault();
-    login({ email });
-    navigate('/login');
+    if (password !== confirm) {
+      setError('Konfirmasi kata sandi tidak cocok.');
+      return;
+    }
+    setError('');
+    // Mock: langsung buat sesi & arahkan ke beranda.
+    login({ name, email, phone });
+    navigate('/');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-[590px] bg-background-primary border border-border rounded-md p-9 flex flex-col gap-9">
         {/* HEADER */}
         <div className="text-center flex flex-col gap-2">
@@ -37,9 +45,22 @@ export default function Register() {
 
         {/* FORM */}
         <form onSubmit={handleRegister} className="flex flex-col gap-6">
-          <Input label="Nama Lengkap" required />
+          <Input
+            label="Nama Lengkap"
+            required
+            placeholder="Masukkan nama lengkap"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-          <Input label="E-Mail" required />
+          <Input
+            label="E-Mail"
+            required
+            type="email"
+            placeholder="Masukkan email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
 
           {/* PHONE NUMBER */}
           <PhoneInput
@@ -49,16 +70,27 @@ export default function Register() {
             onChange={setPhone}
           />
 
-          <Input label="Kata Sandi" required isPassword />
+          <Input
+            label="Kata Sandi"
+            required
+            isPassword
+            placeholder="Masukkan password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-          <Input label="Konfirmasi Kata Sandi" required isPassword />
+          <Input
+            label="Konfirmasi Kata Sandi"
+            required
+            isPassword
+            placeholder="Ulangi password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
 
-          {/* LUPA PASSWORD */}
-          <div className="flex justify-end">
-            <UnstyledButton className="text-text-dark-secondary hover:text-text-dark-primary">
-              Lupa Password?
-            </UnstyledButton>
-          </div>
+          {error && (
+            <p className="text-sm font-medium text-error -mt-2">{error}</p>
+          )}
 
           {/* BUTTON */}
           <div className="flex flex-col gap-3">
@@ -66,18 +98,19 @@ export default function Register() {
               type="submit"
               variant="contained"
               color="primary"
-              className="w-full"
-              onClick={() => navigate('/register')}>
+              className="w-full">
               Daftar
             </Button>
 
-            <Button
-              variant="shadow"
-              color="primary"
-              className="w-full"
-              onClick={() => navigate('/register')}>
-              Masuk
-            </Button>
+            <Link to="/login">
+              <Button
+                type="button"
+                variant="shadow"
+                color="primary"
+                className="w-full">
+                Masuk
+              </Button>
+            </Link>
           </div>
 
           <Divider text="atau" />
