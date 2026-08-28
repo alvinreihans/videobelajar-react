@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import Input from '../components/ui/Input';
 import Divider from '../components/ui/Divider';
@@ -12,11 +12,15 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Kembali ke halaman asal setelah login (mis. dari tombol "Beli Sekarang").
+  const from = location.state?.from || '/';
 
   const handleLogin = (e) => {
     e.preventDefault();
     login({ email });
-    navigate('/');
+    navigate(from, { replace: true });
   };
 
   return (
@@ -37,6 +41,7 @@ export default function Login() {
           <Input
             label="E-Mail"
             required
+            type="email"
             placeholder="Masukkan email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

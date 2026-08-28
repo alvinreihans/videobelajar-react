@@ -1,5 +1,10 @@
 import { Link } from 'react-router-dom';
 
+// Pastikan path aset selalu absolut (mulai dari root) supaya gambar tetap
+// termuat di rute bertingkat seperti /product/:id, bukan hanya di "/".
+const asset = (p) =>
+  !p || /^(https?:)?\/\//.test(p) || p.startsWith('/') ? p : `/${p}`;
+
 // ─── STARS ────────────────────────────────────────────────────────────────────
 
 const StarFull = () => (
@@ -68,7 +73,7 @@ function Instructor({
   return (
     <div className={`flex items-center ${isMobile ? 'gap-2' : 'gap-2.5'}`}>
       <img
-        src={avatar}
+        src={asset(avatar)}
         alt={instructor}
         className={`rounded-[10px] object-cover shrink-0 ${
           isMobile ? 'w-9 h-9' : 'w-10 h-10'
@@ -139,7 +144,7 @@ export default function ProductCard({
         <div className="flex flex-col gap-2 p-4 md:hidden">
           <div className="flex gap-3">
             <img
-              src={image}
+              src={asset(image)}
               alt={title}
               className="w-[82px] h-[82px] rounded-[10px] object-cover shrink-0"
             />
@@ -174,7 +179,7 @@ export default function ProductCard({
         {/* DESKTOP */}
         <div className="hidden md:flex flex-col gap-4 p-5">
           <img
-            src={image}
+            src={asset(image)}
             alt={title}
             className="w-full h-[193px] rounded-[10px] object-cover"
           />
