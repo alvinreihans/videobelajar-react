@@ -9,8 +9,8 @@ export const services = {
   // 1. USERS — akun pengguna
   users: createCrudService({
     table: 'users',
-    fillable: ['full_name', 'username', 'email', 'password_hash', 'phone', 'avatar', 'role'],
-    searchable: ['role', 'email', 'username'],
+    fillable: ['full_name', 'username', 'email', 'password_hash', 'phone', 'avatar', 'role', 'is_verified', 'verification_token'],
+    searchable: ['role', 'email', 'username', 'verification_token'],
     sortable: ['id', 'full_name', 'created_at'],
     likeable: ['full_name', 'email', 'username'],
   }),

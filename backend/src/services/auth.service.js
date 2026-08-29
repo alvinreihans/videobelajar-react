@@ -5,8 +5,10 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import ApiError from '../utils/ApiError.js';
+import { v4 as uuidv4 } from 'uuid';
 import { jwtConfig } from '../config/env.js';
 import { services } from './index.js';
+import { sendVerificationEmail } from './mail.service.js';
 
 const users = services.users;
 const SALT_ROUNDS = 10;
@@ -70,14 +72,29 @@ async function register(payload = {}) {
   // Enkripsi password SEBELUM disimpan (tidak pernah simpan password mentah).
   const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
 
+  // Token verifikasi email (uuid) disimpan bersama user; is_verified default 0.
+  const verification_token = uuidv4();
   const created = await users.create({
     full_name,
     username,
     email,
     password_hash,
     phone,
+    is_verified: 0,
+    verification_token,
   });
-  return sanitize(created);
+
+  // Kirim email verifikasi (best-effort: kegagalan email tidak membatalkan
+  // registrasi, hanya dicatat di log).
+  let emailPreviewUrl = null;
+  try {
+    const info = await sendVerificationEmail(email, verification_token);
+    emailPreviewUrl = info.previewUrl;
+  } catch (err) {
+    console.error('[mail] Gagal mengirim email verifikasi:', err.message);
+  }
+
+  return { user: sanitize(created), emailPreviewUrl };
 }
 
 // ── LOGIN ──────────────────────────────────────────────────
@@ -111,4 +128,19 @@ async function login(payload = {}) {
   return { token, user: sanitize(user) };
 }
 
-export default { register, login, sanitize };
+// ── VERIFIKASI EMAIL ─────────────────────────────────────────
+async function verifyEmail(token) {
+  if (!token) {
+    throw new ApiError(400, 'Invalid Verification Token');
+  }
+  const rows = await users.getBy('verification_token', token);
+  const user = rows[0];
+  if (!user) {
+    throw new ApiError(400, 'Invalid Verification Token');
+  }
+  // Tandai terverifikasi & hapus token agar tidak bisa dipakai ulang.
+  await users.update(user.id, { is_verified: 1, verification_token: null });
+  return { message: 'Email Verified Successfully' };
+}
+
+export default { register, login, verifyEmail, sanitize };

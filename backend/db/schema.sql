@@ -38,6 +38,8 @@ CREATE TABLE users (
   phone          VARCHAR(20)     NULL,
   avatar         VARCHAR(100)    NULL,
   role           ENUM('student','tutor','admin') NOT NULL DEFAULT 'student',
+  is_verified    TINYINT(1)      NOT NULL DEFAULT 0,
+  verification_token VARCHAR(255) NULL,
   created_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),

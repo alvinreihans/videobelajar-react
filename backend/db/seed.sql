@@ -38,6 +38,9 @@ INSERT INTO users (id, full_name, username, email, password_hash, phone, avatar,
   (6, 'Gregorius Edrik', 'gregorius',    'gregorius@example.com',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000006', '081200000006', 'avatar6.svg', 'student'),
   (7, 'Ayu Kartika', 'ayu',        'ayu@example.com',                  '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000007', '081200000007', 'avatar7.svg', 'student');
 
+-- Data seed dianggap akun terverifikasi.
+UPDATE users SET is_verified = 1;
+
 -- ── 2. TUTORS ────────────────────────────────────────────────────────
 INSERT INTO tutors (id, user_id, name, job_title, company, bio, avatar) VALUES
   (1, 2,    'Rina Saputra',  'Senior Accountant',   'Gojek',     'Berkarier di bidang akuntansi & audit lebih dari 8 tahun.', 'avatar1.svg'),
