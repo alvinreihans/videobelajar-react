@@ -3,6 +3,7 @@
 // otomatis mendapat 6 endpoint CRUD dari crudRouter().
 import { Router } from 'express';
 import { crudRouter } from './crudRouter.js';
+import authRouter from './auth.routes.js';
 import { services, labels } from '../services/index.js';
 
 const router = Router();
@@ -19,6 +20,9 @@ router.get('/', (req, res) => {
     resources: resourcePaths.map((p) => `${base}/${p}`),
   });
 });
+
+// Endpoint autentikasi (register/login/verify-email) — di luar pola CRUD.
+router.use('/auth', authRouter);
 
 // Pasang router CRUD untuk tiap resource.
 for (const path of resourcePaths) {
