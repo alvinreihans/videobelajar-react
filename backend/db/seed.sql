@@ -29,14 +29,14 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- ── 1. USERS ─────────────────────────────────────────────────────────
 -- Catatan: password_hash di bawah hanya contoh (bukan hash asli).
-INSERT INTO users (id, full_name, email, password_hash, phone, avatar, role) VALUES
-  (1, 'Admin Videobelajar', 'admin@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000001', '081200000001', 'avatar1.svg', 'admin'),
-  (2, 'Rina Saputra',       'rina@videobelajar.id',             '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000002', '081200000002', 'avatar1.svg', 'tutor'),
-  (3, 'Kevin Tan',          'kevin@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000003', '081200000003', 'avatar2.svg', 'tutor'),
-  (4, 'Jenna Ortega',       'jenna@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000004', '081200000004', 'avatar3.svg', 'tutor'),
-  (5, 'Alvin Makarim',      'alvin.makarim@intramedika.co.id',  '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000005', '081200000005', 'avatar5.svg', 'student'),
-  (6, 'Gregorius Edrik',    'gregorius@example.com',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000006', '081200000006', 'avatar6.svg', 'student'),
-  (7, 'Ayu Kartika',        'ayu@example.com',                  '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000007', '081200000007', 'avatar7.svg', 'student');
+INSERT INTO users (id, full_name, username, email, password_hash, phone, avatar, role) VALUES
+  (1, 'Admin Videobelajar', 'admin', 'admin@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000001', '081200000001', 'avatar1.svg', 'admin'),
+  (2, 'Rina Saputra', 'rina',       'rina@videobelajar.id',             '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000002', '081200000002', 'avatar1.svg', 'tutor'),
+  (3, 'Kevin Tan', 'kevin',          'kevin@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000003', '081200000003', 'avatar2.svg', 'tutor'),
+  (4, 'Jenna Ortega', 'jenna',       'jenna@videobelajar.id',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000004', '081200000004', 'avatar3.svg', 'tutor'),
+  (5, 'Alvin Makarim', 'alvinmakarim',      'alvinreihans@gmail.com',  '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000005', '081200000005', 'avatar5.svg', 'student'),
+  (6, 'Gregorius Edrik', 'gregorius',    'gregorius@example.com',            '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000006', '081200000006', 'avatar6.svg', 'student'),
+  (7, 'Ayu Kartika', 'ayu',        'ayu@example.com',                  '$2b$10$SeedHashContohSajaTidakDipakaiLogin000000000007', '081200000007', 'avatar7.svg', 'student');
 
 -- ── 2. TUTORS ────────────────────────────────────────────────────────
 INSERT INTO tutors (id, user_id, name, job_title, company, bio, avatar) VALUES

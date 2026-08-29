@@ -32,6 +32,7 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users (
   id             BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   full_name      VARCHAR(100)    NOT NULL,
+  username       VARCHAR(50)     NULL,
   email          VARCHAR(150)    NOT NULL,
   password_hash  VARCHAR(255)    NOT NULL,
   phone          VARCHAR(20)     NULL,
@@ -40,7 +41,8 @@ CREATE TABLE users (
   created_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at     TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_users_email (email)
+  UNIQUE KEY uq_users_email (email),
+  UNIQUE KEY uq_users_username (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 2. TUTORS

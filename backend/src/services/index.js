@@ -9,8 +9,8 @@ export const services = {
   // 1. USERS — akun pengguna
   users: createCrudService({
     table: 'users',
-    fillable: ['full_name', 'email', 'password_hash', 'phone', 'avatar', 'role'],
-    searchable: ['role', 'email'],
+    fillable: ['full_name', 'username', 'email', 'password_hash', 'phone', 'avatar', 'role'],
+    searchable: ['role', 'email', 'username'],
   }),
 
   // 2. TUTORS — profil pengajar
