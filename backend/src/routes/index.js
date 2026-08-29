@@ -5,6 +5,7 @@ import { Router } from 'express';
 import { crudRouter } from './crudRouter.js';
 import authRouter from './auth.routes.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
+import uploadRouter from './upload.routes.js';
 import { services, labels } from '../services/index.js';
 
 const router = Router();
@@ -24,6 +25,7 @@ router.get('/', (req, res) => {
 
 // Endpoint autentikasi (register/login/verify-email) — di luar pola CRUD.
 router.use('/auth', authRouter);
+router.use('/upload', uploadRouter);
 
 // Guard (proteksi token) per resource. Contoh sesuai mission: GET /courses
 // hanya bisa diakses bila membawa token yang valid.

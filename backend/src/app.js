@@ -2,10 +2,12 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import apiRouter from './routes/index.js';
 import notFound from './middlewares/notFound.js';
 import errorHandler from './middlewares/errorHandler.js';
-import { corsOrigin, NODE_ENV } from './config/env.js';
+import { corsOrigin, NODE_ENV, uploadConfig } from './config/env.js';
 
 const app = express();
 
@@ -31,6 +33,14 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.json({ success: true, status: 'ok', uptime: process.uptime() });
 });
+
+// ── File statis hasil upload (bisa diakses via /uploads/<nama-file>) ──
+const uploadsPath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  uploadConfig.dir,
+);
+app.use('/uploads', express.static(uploadsPath));
 
 // ── Semua endpoint resource ada di bawah /api ──────────────────────
 app.use('/api', apiRouter);
