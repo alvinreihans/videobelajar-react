@@ -1,17 +1,15 @@
-// ─── LANGKAH KEDUA: Implementing Data Manipulation Language (DML) ─────
+// ─── Data Manipulation Language (DML) — Factory Service ──────────────
 // Factory yang menghasilkan satu set service DML (SELECT, INSERT, UPDATE,
 // DELETE) untuk sebuah tabel. Semua query memakai prepared statement (`?`)
 // sehingga aman dari SQL Injection.
 //
-// Dengan pola factory ini, setiap tabel cukup memberi "konfigurasi" (nama
-// tabel, kolom yang boleh diisi, kolom yang boleh difilter) tanpa menulis
-// ulang query yang sama berkali-kali — tetapi SQL mentahnya tetap terlihat
-// jelas di sini untuk tujuan pembelajaran.
+// Logika bangun-query untuk daftar data (filter, sort, search, paginasi)
+// dipusatkan di utils/queryBuilder.js agar tidak diulang di tiap service.
 import pool, { query } from '../config/db.js';
 import ApiError from '../utils/ApiError.js';
+import { buildListClauses } from '../utils/queryBuilder.js';
 
-// Mengubah nilai object/array menjadi string JSON untuk kolom bertipe JSON,
-// dan Date menjadi string. Nilai lain dibiarkan apa adanya.
+// Ubah object/array menjadi string JSON untuk kolom bertipe JSON.
 function normalizeValue(value, isJson) {
   if (value === undefined) return null;
   if (isJson && value !== null && typeof value === 'object') {
@@ -20,69 +18,49 @@ function normalizeValue(value, isJson) {
   return value;
 }
 
-// Membersihkan angka untuk LIMIT/OFFSET (di-inline sebagai integer, bukan
-// placeholder, karena sebagian versi MySQL menolak `?` pada LIMIT).
-function toInt(value, fallback, max) {
-  const n = Number.parseInt(value, 10);
-  if (Number.isNaN(n) || n < 0) return fallback;
-  return max ? Math.min(n, max) : n;
-}
-
 export function createCrudService({
   table,
   fillable = [],
-  searchable = [],
+  searchable = [],        // kolom untuk FILTER (WHERE `col` = ?)
+  sortable = ['id'],      // kolom yang boleh dipakai SORT (?sortBy=)
+  likeable = [],          // kolom teks untuk SEARCH (?search=, memakai LIKE)
   jsonColumns = [],
   defaultOrder = 'id DESC',
 }) {
   const jsonSet = new Set(jsonColumns);
+  const quote = (c) => `\`${c}\``;
 
-  // ── SELECT (semua data) ───────────────────────────────────────────
-  // Mendukung filter dinamis lewat query-param (mis. ?status=published),
-  // serta paginasi lewat ?limit= & ?offset=.
+  // ── SELECT (semua data) — mendukung filter, sort, search, & paginasi ──
   async function getAll(filters = {}) {
-    const conditions = [];
-    const params = [];
-
-    for (const column of searchable) {
-      const value = filters[column];
-      if (value !== undefined && value !== '') {
-        conditions.push(`\`${column}\` = ?`);
-        params.push(value);
-      }
-    }
-
-    const whereSql = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const limit = toInt(filters.limit, 100, 200);
-    const offset = toInt(filters.offset, 0);
-
-    const sql =
-      `SELECT * FROM \`${table}\` ${whereSql} ` +
-      `ORDER BY ${defaultOrder} LIMIT ${limit} OFFSET ${offset}`;
+    const { whereSql, params, orderSql, limitSql } = buildListClauses(filters, {
+      columns: Object.fromEntries(searchable.map((c) => [c, quote(c)])),
+      filterKeys: searchable,
+      sortable: Object.fromEntries(sortable.map((c) => [c, quote(c)])),
+      likeColumns: likeable.map(quote),
+      defaultOrder,
+    });
+    const sql = `SELECT * FROM ${quote(table)} ${whereSql} ${orderSql} ${limitSql}`;
     return query(sql, params);
   }
 
-  // ── SELECT by id (satu data berdasarkan primary key) ──────────────
+  // ── SELECT by id ──
   async function getById(id) {
     const rows = await query(
-      `SELECT * FROM \`${table}\` WHERE id = ? LIMIT 1`,
+      `SELECT * FROM ${quote(table)} WHERE id = ? LIMIT 1`,
       [id]
     );
     return rows[0] || null;
   }
 
-  // ── SELECT by atribut lain (mis. by email, by slug) ───────────────
+  // ── SELECT by atribut lain (mis. by email, by slug) ──
   async function getBy(column, value) {
     if (!searchable.includes(column) && column !== 'id') {
       throw new ApiError(400, `Kolom '${column}' tidak bisa dijadikan filter`);
     }
-    return query(
-      `SELECT * FROM \`${table}\` WHERE \`${column}\` = ?`,
-      [value]
-    );
+    return query(`SELECT * FROM ${quote(table)} WHERE ${quote(column)} = ?`, [value]);
   }
 
-  // ── INSERT (menambahkan data baru) ────────────────────────────────
+  // ── INSERT ──
   async function create(data) {
     const columns = fillable.filter((c) => data[c] !== undefined);
     if (columns.length === 0) {
@@ -90,40 +68,43 @@ export function createCrudService({
     }
     const placeholders = columns.map(() => '?').join(', ');
     const values = columns.map((c) => normalizeValue(data[c], jsonSet.has(c)));
-    const columnList = columns.map((c) => `\`${c}\``).join(', ');
+    const columnList = columns.map(quote).join(', ');
 
     const [result] = await pool.execute(
-      `INSERT INTO \`${table}\` (${columnList}) VALUES (${placeholders})`,
+      `INSERT INTO ${quote(table)} (${columnList}) VALUES (${placeholders})`,
       values
     );
     return getById(result.insertId);
   }
 
-  // ── UPDATE (mengubah data spesifik by id) ─────────────────────────
+  // ── UPDATE ──
   async function update(id, data) {
     const columns = fillable.filter((c) => data[c] !== undefined);
     if (columns.length === 0) {
       throw new ApiError(400, 'Tidak ada field valid yang dikirim untuk diperbarui');
     }
-    const setSql = columns.map((c) => `\`${c}\` = ?`).join(', ');
+    const setSql = columns.map((c) => `${quote(c)} = ?`).join(', ');
     const values = columns.map((c) => normalizeValue(data[c], jsonSet.has(c)));
 
     const [result] = await pool.execute(
-      `UPDATE \`${table}\` SET ${setSql} WHERE id = ?`,
+      `UPDATE ${quote(table)} SET ${setSql} WHERE id = ?`,
       [...values, id]
     );
     if (result.affectedRows === 0) return null;
     return getById(id);
   }
 
-  // ── DELETE (menghapus data spesifik by id) ────────────────────────
+  // ── DELETE ──
   async function remove(id) {
     const [result] = await pool.execute(
-      `DELETE FROM \`${table}\` WHERE id = ?`,
+      `DELETE FROM ${quote(table)} WHERE id = ?`,
       [id]
     );
     return result.affectedRows > 0;
   }
 
-  return { table, fillable, searchable, getAll, getById, getBy, create, update, remove };
+  return {
+    table, fillable, searchable, sortable, likeable,
+    getAll, getById, getBy, create, update, remove,
+  };
 }

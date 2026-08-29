@@ -1,10 +1,11 @@
 // ─── Service khusus COURSES (dengan JOIN) ────────────────────────────
-// Resource utama "Edu Course". Selain CRUD standar dari baseService, fungsi
-// baca (getAll & getById) di-override agar sekaligus mengambil nama tutor &
-// kategori lewat JOIN — sehingga response API kaya informasi (tidak sekadar
-// menampilkan tutor_id / category_id).
+// Resource utama "Edu Course". Fungsi baca (getAll & getById) di-override
+// agar sekaligus mengambil nama tutor & kategori lewat JOIN. Logika filter,
+// sort, dan search memakai buildListClauses yang sama dengan baseService,
+// sehingga tidak ada duplikasi kode query.
 import { createCrudService } from './baseService.js';
 import { query } from '../config/db.js';
+import { buildListClauses } from '../utils/queryBuilder.js';
 
 const base = createCrudService({
   table: 'courses',
@@ -31,32 +32,31 @@ const SELECT_WITH_JOIN = `
   LEFT JOIN tutors t       ON t.id  = c.tutor_id
 `;
 
-function toInt(value, fallback, max) {
-  const n = Number.parseInt(value, 10);
-  if (Number.isNaN(n) || n < 0) return fallback;
-  return max ? Math.min(n, max) : n;
-}
-
-async function getAll(filters = {}) {
-  const conditions = [];
-  const params = [];
-  const map = {
+// Konfigurasi filter / sort / search untuk daftar course.
+const LIST_CONFIG = {
+  columns: {
     category_id: 'c.category_id',
     tutor_id: 'c.tutor_id',
     status: 'c.status',
     slug: 'c.slug',
-  };
-  for (const [key, col] of Object.entries(map)) {
-    if (filters[key] !== undefined && filters[key] !== '') {
-      conditions.push(`${col} = ?`);
-      params.push(filters[key]);
-    }
-  }
-  const whereSql = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-  const limit = toInt(filters.limit, 100, 200);
-  const offset = toInt(filters.offset, 0);
-  const sql = `${SELECT_WITH_JOIN} ${whereSql} ORDER BY c.id DESC LIMIT ${limit} OFFSET ${offset}`;
-  return query(sql, params);
+    topic: 'cat.slug',          // ?topic=<slug-kategori> → filter berdasarkan kategori
+  },
+  filterKeys: ['category_id', 'tutor_id', 'status', 'slug', 'topic'],
+  sortable: {
+    price: 'c.price',
+    rating: 'c.rating',
+    students: 'c.students_count',
+    title: 'c.title',
+    newest: 'c.created_at',
+    id: 'c.id',
+  },
+  likeColumns: ['c.title', 'c.description', 't.name'],  // ?search= mencari di sini
+  defaultOrder: 'c.id DESC',
+};
+
+async function getAll(filters = {}) {
+  const { whereSql, params, orderSql, limitSql } = buildListClauses(filters, LIST_CONFIG);
+  return query(`${SELECT_WITH_JOIN} ${whereSql} ${orderSql} ${limitSql}`, params);
 }
 
 async function getById(id) {

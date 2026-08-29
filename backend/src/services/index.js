@@ -11,6 +11,8 @@ export const services = {
     table: 'users',
     fillable: ['full_name', 'username', 'email', 'password_hash', 'phone', 'avatar', 'role'],
     searchable: ['role', 'email', 'username'],
+    sortable: ['id', 'full_name', 'created_at'],
+    likeable: ['full_name', 'email', 'username'],
   }),
 
   // 2. TUTORS — profil pengajar
@@ -25,6 +27,8 @@ export const services = {
     table: 'categories',
     fillable: ['slug', 'name'],
     searchable: ['slug'],
+    sortable: ['id', 'name'],
+    likeable: ['name', 'slug'],
   }),
 
   // 4. COURSES — produk/kelas (resource utama, pakai service ber-JOIN)
