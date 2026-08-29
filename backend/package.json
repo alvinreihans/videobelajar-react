@@ -11,14 +11,25 @@
     "db:seed": "node scripts/runSql.js db/seed.sql",
     "db:reset": "node scripts/runSql.js db/schema.sql && node scripts/runSql.js db/seed.sql"
   },
-  "keywords": ["express", "mysql", "rest-api", "videobelajar", "edu-course"],
+  "keywords": [
+    "express",
+    "mysql",
+    "rest-api",
+    "videobelajar",
+    "edu-course"
+  ],
   "author": "Alvin Makarim",
   "license": "MIT",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.0",
-    "mysql2": "^3.11.5"
+    "multer": "^2.3.0",
+    "mysql2": "^3.11.5",
+    "nodemailer": "^9.0.6",
+    "uuid": "^14.0.2"
   }
 }
