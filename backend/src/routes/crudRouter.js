@@ -11,16 +11,20 @@
 import { Router } from 'express';
 import { createCrudController } from '../controllers/baseController.js';
 
-export function crudRouter(service, label) {
+// `guards` opsional: { list, detail, create, update, remove } berisi array
+// middleware yang dijalankan SEBELUM controller pada aksi terkait — dipakai
+// untuk memasang authMiddleware.verifyToken pada endpoint yang butuh login.
+export function crudRouter(service, label, guards = {}) {
   const router = Router();
   const c = createCrudController(service, label);
+  const g = (name) => guards[name] || [];
 
-  router.get('/', c.list);
-  router.get('/:id', c.detail);
-  router.post('/', c.create);
-  router.put('/:id', c.update);
-  router.patch('/:id', c.update);
-  router.delete('/:id', c.remove);
+  router.get('/', ...g('list'), c.list);
+  router.get('/:id', ...g('detail'), c.detail);
+  router.post('/', ...g('create'), c.create);
+  router.put('/:id', ...g('update'), c.update);
+  router.patch('/:id', ...g('update'), c.update);
+  router.delete('/:id', ...g('remove'), c.remove);
 
   return router;
 }
