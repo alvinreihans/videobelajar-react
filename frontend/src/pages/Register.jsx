@@ -15,19 +15,30 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const [submitting, setSubmitting] = useState(false);
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (password !== confirm) {
       setError('Konfirmasi kata sandi tidak cocok.');
       return;
     }
     setError('');
-    // Mock: langsung buat sesi & arahkan ke beranda.
-    login({ name, email, phone });
-    navigate('/');
+    setSubmitting(true);
+    try {
+      // Kirim ke backend: fullname, email, phone, password.
+      const res = await register({ fullname: name, email, phone, password });
+      // Registrasi berhasil → arahkan ke login (akun perlu verifikasi email dulu).
+      navigate('/login', {
+        state: { registered: true, email, emailPreviewUrl: res.emailPreviewUrl },
+      });
+    } catch (err) {
+      setError(err.message || 'Gagal mendaftar. Coba lagi.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -98,8 +109,9 @@ export default function Register() {
               type="submit"
               variant="contained"
               color="primary"
+              disabled={submitting}
               className="w-full">
-              Daftar
+              {submitting ? 'Memproses…' : 'Daftar'}
             </Button>
 
             <Link to="/login">

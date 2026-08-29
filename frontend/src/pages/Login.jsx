@@ -10,17 +10,29 @@ import UnstyledButton from '../components/ui/UnstyledButton';
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   // Kembali ke halaman asal setelah login (mis. dari tombol "Beli Sekarang").
   const from = location.state?.from || '/';
+  const justRegistered = location.state?.registered;
+  const emailPreviewUrl = location.state?.emailPreviewUrl;
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    login({ email });
-    navigate(from, { replace: true });
+    setError('');
+    setSubmitting(true);
+    try {
+      await login({ email, password });
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err.message || 'Gagal masuk. Coba lagi.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -35,6 +47,25 @@ export default function Login() {
             Yuk, lanjutin belajarmu di videobelajar.
           </p>
         </div>
+
+        {/* NOTIF SUKSES REGISTRASI */}
+        {justRegistered && (
+          <div className="rounded-[10px] bg-success-bg text-success px-4 py-3 text-sm font-medium">
+            Registrasi berhasil! Silakan cek email untuk verifikasi, lalu masuk.
+            {emailPreviewUrl && (
+              <>
+                {' '}
+                <a
+                  href={emailPreviewUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline font-semibold">
+                  Lihat email verifikasi
+                </a>
+              </>
+            )}
+          </div>
+        )}
 
         {/* FORM */}
         <form onSubmit={handleLogin} className="flex flex-col gap-6">
@@ -56,6 +87,10 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
 
+          {error && (
+            <p className="text-sm font-medium text-error -mt-2">{error}</p>
+          )}
+
           {/* LUPA PASSWORD */}
           <div className="flex justify-end">
             <UnstyledButton className="text-text-dark-secondary hover:text-text-dark-primary">
@@ -69,8 +104,9 @@ export default function Login() {
               type="submit"
               variant="contained"
               color="primary"
+              disabled={submitting}
               className="w-full">
-              Masuk
+              {submitting ? 'Memproses…' : 'Masuk'}
             </Button>
 
             <Link to="/register">

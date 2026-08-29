@@ -10,9 +10,13 @@ const axiosClient = axios.create({
 });
 
 // ─── REQUEST INTERCEPTOR ─────────────────────────────────────────────────────
-// Tempat terpusat untuk menambah header/otorisasi & logging request.
+// Menyisipkan token JWT (bila ada) ke header Authorization + logging request.
 axiosClient.interceptors.request.use(
   (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     if (import.meta.env.DEV) {
       console.log(
         `[API] ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`

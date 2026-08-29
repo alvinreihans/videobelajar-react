@@ -1,10 +1,8 @@
 import { createContext, useContext, useState } from 'react';
+import * as authApi from '../services/api/authService';
 
 const AuthContext = createContext();
 
-// Baca user dari localStorage SECARA SINKRON saat inisialisasi state.
-// (Sebelumnya via useEffect → sempat null di render pertama, bikin halaman
-// terproteksi "berkedip" lalu redirect ke /login walau user sudah login.)
 function readStoredUser() {
   try {
     const stored = localStorage.getItem('user');
@@ -14,19 +12,30 @@ function readStoredUser() {
   }
 }
 
+// Samakan bentuk user dari backend → frontend (halaman Profil dsb. memakai `name`).
+function normalizeUser(u = {}) {
+  return {
+    ...u,
+    name: u.full_name || u.name || (u.email ? u.email.split('@')[0] : 'Pengguna'),
+    avatar: u.avatar || 'avatar-user.svg',
+  };
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(readStoredUser);
 
-  const login = (data) => {
-    // Lengkapi default nama dari email bila belum ada (dipakai halaman Profil).
-    const enriched = {
-      name: data.name || (data.email ? data.email.split('@')[0] : 'Pengguna'),
-      avatar: data.avatar || 'avatar-user.svg',
-      ...data,
-    };
-    setUser(enriched);
-    localStorage.setItem('user', JSON.stringify(enriched));
+  // LOGIN — panggil backend, simpan token + user. Melempar error bila gagal.
+  const login = async ({ email, password }) => {
+    const res = await authApi.login({ email, password }); // { token, data }
+    const nextUser = normalizeUser(res.data);
+    localStorage.setItem('token', res.token);
+    localStorage.setItem('user', JSON.stringify(nextUser));
+    setUser(nextUser);
+    return nextUser;
   };
+
+  // REGISTER — panggil backend. Tidak auto-login (akun perlu verifikasi email).
+  const register = (payload) => authApi.register(payload);
 
   const updateUser = (patch) => {
     setUser((prev) => {
@@ -39,10 +48,11 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
