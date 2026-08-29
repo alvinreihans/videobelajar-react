@@ -1,3 +1,7 @@
+# =====================================================================
+#  .gitignore — Monorepo Video Belajar (berlaku utk frontend/ & backend/)
+# =====================================================================
+
 # Logs
 logs
 *.log
@@ -7,15 +11,22 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies & build output (pola tanpa slash → cocok di subfolder mana pun)
 node_modules
 dist
 dist-ssr
+build
+coverage
 *.local
 
 # Env (jangan commit .env asli; .env.example tetap di-track)
 .env
 .env.*
 !.env.example
+
+# Upload backend (file unggahan tidak masuk repo, kecuali penanda folder)
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # Editor directories and files
 .vscode/*
