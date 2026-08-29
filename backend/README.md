@@ -1,82 +1,91 @@
 # Video Belajar — Backend REST API (Edu Course)
 
-Backend **Express.js + MySQL** untuk aplikasi Video Belajar. Dibangun sebagai implementasi **Mission Intermediate Backend 1A**: menghubungkan database ke Node.js, menerapkan **DML** (SELECT, INSERT, UPDATE, DELETE), membangun **REST API** (GET, POST, PATCH/PUT, DELETE), dan mengujinya dengan **Postman**.
+Backend **Express.js + MySQL** untuk aplikasi Video Belajar. Selain CRUD 15 resource (ERD), backend ini melengkapi **Mission Intermediate Backend** dengan: **autentikasi** (register + login), **JWT middleware**, **query params** (filter, sort, search), **verifikasi email**, dan **upload gambar**.
 
-Skema database mengikuti ERD 15 tabel yang sudah dibuat di mission sebelumnya (users, tutors, categories, courses, modules, materials, quiz_questions, pretests, pretest_questions, orders, order_items, payments, enrollments, material_progress, reviews).
+> Bagian dari monorepo: frontend (React) ada di `../frontend`, backend ini di `backend/`.
 
 ---
 
 ## 1. Prasyarat
 
-| Kebutuhan | Versi minimal |
+| Kebutuhan | Versi |
 |---|---|
 | Node.js | 18+ (disarankan 20/22) |
-| MySQL   | 8.0+ (atau MariaDB 10.4+) |
-| npm     | bawaan Node |
+| MySQL / MariaDB | MySQL 8.0+ atau MariaDB 10.1+ |
+| npm | bawaan Node |
+
+> Kolom `options` pada `quiz_questions` & `pretest_questions` memakai tipe **`LONGTEXT`** (menyimpan string JSON) agar kompatibel dengan MariaDB 10.1 yang belum mendukung tipe `JSON` native.
 
 ---
 
-## 2. Instalasi (Langkah Pertama: Connecting to Database)
+## 2. Instalasi
 
 ```bash
-# 1. Masuk ke folder backend
 cd backend
-
-# 2. Unduh/instal library yang dibutuhkan (express, mysql2, cors, dotenv, morgan)
-npm install
-
-# 3. Salin file konfigurasi environment lalu sesuaikan
-cp .env.example .env      # Windows PowerShell: copy .env.example .env
+npm install                 # express, mysql2, cors, dotenv, morgan,
+                            # bcryptjs, jsonwebtoken, nodemailer, uuid, multer
+cp .env.example .env        # Windows PowerShell: copy .env.example .env
 ```
 
-Buka file `.env` dan sesuaikan dengan konfigurasi MySQL kamu:
+Sesuaikan `.env`:
 
 ```env
+# Server
 PORT=4000
+NODE_ENV=development
+APP_URL=http://localhost:4000        # dipakai untuk link verifikasi email
+
+# Database MySQL
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=root
-DB_PASSWORD=passwordmu
+DB_PASSWORD=
 DB_NAME=videobelajar
-CORS_ORIGIN=http://localhost:5173
-```
 
-> `mysql2` adalah driver MySQL untuk Node.js. Koneksi dibuat sekali sebagai **connection pool** di `src/config/db.js`, lalu dipakai ulang oleh semua service.
+# CORS (asal frontend)
+CORS_ORIGIN=http://localhost:5173
+
+# Autentikasi (JWT)
+JWT_SECRET=ganti-dengan-string-acak-yang-panjang
+JWT_EXPIRES_IN=1d
+
+# Email (nodemailer) — kosongkan MAIL_HOST untuk memakai akun uji Ethereal
+MAIL_HOST=
+MAIL_PORT=587
+MAIL_SECURE=false
+MAIL_USER=
+MAIL_PASS=
+MAIL_FROM="Video Belajar <no-reply@videobelajar.test>"
+
+# Upload
+UPLOAD_DIR=uploads
+UPLOAD_MAX_SIZE=2097152               # 2 MB
+```
 
 ---
 
 ## 3. Menyiapkan Database (schema + seed)
 
-Script sudah disediakan di `package.json`. Pastikan MySQL server sudah berjalan lalu jalankan:
+Pastikan MySQL berjalan, lalu:
 
 ```bash
-# Membuat database "videobelajar" + 15 tabel (schema.sql)
-npm run db:schema
-
-# Mengisi data contoh ke semua tabel (seed.sql)
-npm run db:seed
-
-# Atau sekaligus keduanya (reset ulang dari nol)
-npm run db:reset
+npm run db:schema     # buat database "videobelajar" + tabel (schema.sql)
+npm run db:seed       # isi data contoh (seed.sql)
+npm run db:reset      # keduanya sekaligus (reset dari nol)
 ```
 
-Alternatif manual (mis. lewat MySQL Workbench / phpMyAdmin / CLI): jalankan isi
-`db/schema.sql` lalu `db/seed.sql`.
-
-> Nama database default adalah **`videobelajar`** (didefinisikan di `db/schema.sql`
-> dan `DB_NAME` pada `.env` — keduanya harus sama).
+> `npm run db:reset` **menghapus (TRUNCATE) lalu mengisi ulang** semua tabel — akun yang kamu daftarkan lewat aplikasi akan ikut terhapus.
 
 ---
 
 ## 4. Menjalankan Server
 
 ```bash
-npm run dev     # mode development (auto-restart saat file berubah)
-# atau
-npm start       # mode biasa
+npm run dev     # development (auto-restart)
+npm start       # biasa
 ```
 
-Jika berhasil, muncul:
+Berhasil bila muncul:
 
 ```
 ✅ Database MySQL terhubung
@@ -84,153 +93,205 @@ Jika berhasil, muncul:
 📚 Dokumentasi endpoint: http://localhost:4000/api
 ```
 
-Cek cepat di browser / curl:
-
-- `http://localhost:4000/health` → status server
-- `http://localhost:4000/api` → daftar semua endpoint
-- `http://localhost:4000/api/courses` → daftar kelas
-
 ---
 
-## 5. Daftar Endpoint (Langkah Ketiga: REST API)
+## 5. Autentikasi
 
-Setiap resource memiliki **6 endpoint CRUD** yang seragam. Base URL: `http://localhost:4000/api`.
-
-| Method | Endpoint | Keterangan | Service DML |
-|---|---|---|---|
-| GET    | `/{resource}`      | Ambil semua data (+ filter & paginasi) | SELECT |
-| GET    | `/{resource}/:id`  | Ambil satu data berdasarkan id | SELECT by id |
-| POST   | `/{resource}`      | Tambah data baru | INSERT |
-| PUT    | `/{resource}/:id`  | Ubah data (kirim field yang mau diganti) | UPDATE |
-| PATCH  | `/{resource}/:id`  | Ubah sebagian data | UPDATE |
-| DELETE | `/{resource}/:id`  | Hapus data berdasarkan id | DELETE |
-
-**15 resource yang tersedia:**
-
-`users`, `tutors`, `categories`, `courses`, `modules`, `materials`,
-`quiz-questions`, `pretests`, `pretest-questions`, `orders`, `order-items`,
-`payments`, `enrollments`, `material-progress`, `reviews`.
-
-### Contoh untuk resource utama `courses` (Edu Course)
+Base URL: `http://localhost:4000/api`.
 
 | Method | Endpoint | Keterangan |
 |---|---|---|
-| GET | `/api/courses` | List semua kelas (JOIN tutor & kategori) |
-| GET | `/api/courses/:id` | Satu kelas berdasarkan id |
-| GET | `/api/courses?category_id=1&status=published` | Filter berdasarkan atribut |
-| POST | `/api/courses` | Tambah kelas |
-| PATCH | `/api/courses/:id` | Ubah sebagian data kelas |
-| DELETE | `/api/courses/:id` | Hapus kelas |
+| POST | `/auth/register` | Daftar user baru (password di-hash `bcrypt`, kirim email verifikasi) |
+| POST | `/auth/login` | Login → mengembalikan **token JWT** |
+| GET  | `/auth/verify-email?token=...` | Verifikasi email via token |
 
-**Query param yang didukung pada GET list:** filter berdasarkan kolom tertentu
-(mis. `?status=published`, `?category_id=1`, `?user_id=5`), plus `?limit=` &
-`?offset=` untuk paginasi.
+### Register — `POST /api/auth/register`
 
-### Contoh request body POST `/api/courses`
+Body (`username` opsional; bila kosong dibuat otomatis dari email):
+
+```json
+{ "fullname": "Test User", "email": "test@mail.com", "phone": "0812", "password": "rahasia123" }
+```
+
+Respons `201`:
 
 ```json
 {
-  "category_id": 2,
-  "tutor_id": 3,
-  "title": "Belajar Node.js REST API",
-  "slug": "belajar-nodejs-rest-api",
-  "description": "Kelas backend Express + MySQL",
-  "price": 150000,
-  "status": "published"
+  "success": true,
+  "message": "Registrasi berhasil. Silakan cek email untuk verifikasi.",
+  "data": { "id": 8, "full_name": "Test User", "username": "test", "email": "test@mail.com", "role": "student" },
+  "emailPreviewUrl": "https://ethereal.email/message/..."
 }
 ```
 
-### Bentuk response
+`password_hash` & `verification_token` tidak pernah ikut di respons. Email duplikat → `409`.
 
-Sukses:
+### Login — `POST /api/auth/login`
 
 ```json
-{ "success": true, "count": 9, "data": [ ... ] }
-{ "success": true, "message": "Course berhasil ditambahkan", "data": { ... } }
+{ "email": "test@mail.com", "password": "rahasia123" }
 ```
 
-Error (contoh 404 / 400 / 409):
+Respons `200`:
 
 ```json
-{ "success": false, "message": "Course dengan id 99 tidak ditemukan" }
+{ "success": true, "message": "Login berhasil", "token": "<JWT>", "data": { ... } }
+```
+
+Email tidak ditemukan **atau** password salah → `401` dengan pesan generik `"Email atau password salah"` (tidak membocorkan email mana yang terdaftar).
+
+---
+
+## 6. Endpoint Terproteksi (JWT Middleware)
+
+Endpoint tertentu memerlukan token pada header:
+
+```
+Authorization: Bearer <token>
+```
+
+Middleware `verifyToken` memeriksa token dengan `jwt.verify`. Token tidak ada / tidak valid → `401` (`"Autentikasi gagal ..."`); valid → request diteruskan.
+
+Contoh yang diproteksi (sesuai mission): **`GET /api/courses`**.
+
+```bash
+curl http://localhost:4000/api/courses -H "Authorization: Bearer <TOKEN>"
+```
+
+> Proteksi diatur per-resource di `src/routes/index.js` (objek `guards`), mis. `{ courses: { list: [verifyToken] } }` — mudah dipindah/ditambah ke endpoint lain.
+
+---
+
+## 7. CRUD 15 Resource
+
+Setiap resource punya 6 endpoint seragam (base `/api`):
+
+| Method | Endpoint | DML |
+|---|---|---|
+| GET | `/{resource}` | SELECT (list) |
+| GET | `/{resource}/:id` | SELECT by id |
+| POST | `/{resource}` | INSERT |
+| PUT / PATCH | `/{resource}/:id` | UPDATE |
+| DELETE | `/{resource}/:id` | DELETE |
+
+Resource: `users`, `tutors`, `categories`, `courses`, `modules`, `materials`, `quiz-questions`, `pretests`, `pretest-questions`, `orders`, `order-items`, `payments`, `enrollments`, `material-progress`, `reviews`.
+
+---
+
+## 8. Query Params: Filter, Sort, Search
+
+Pada endpoint list (mis. `GET /api/courses`):
+
+| Jenis | Param | Contoh | SQL |
+|---|---|---|---|
+| **Filter** | nama kolom | `?status=published&category_id=2` | `WHERE col = ?` |
+| **Filter (courses)** | `topic` | `?topic=desain` | `WHERE cat.slug = ?` |
+| **Sort** | `sortBy` + `order` | `?sortBy=price&order=asc` | `ORDER BY col ASC/DESC` |
+| **Search** | `search` | `?search=react` | `WHERE (colA LIKE ? OR ...)` |
+| **Paginasi** | `limit`, `offset` | `?limit=10&offset=0` | `LIMIT ? OFFSET ?` |
+
+Contoh gabungan:
+
+```
+GET /api/courses?topic=desain&search=ui&sortBy=rating&order=desc&limit=6
+```
+
+- Kolom untuk **sort** dibatasi *whitelist* per-resource (aman dari SQL injection).
+- `courses` mendukung sort: `price`, `rating`, `students`, `title`, `newest`, `id`; search di judul/deskripsi/nama tutor.
+
+---
+
+## 9. Verifikasi Email (nodemailer + uuid)
+
+Saat register, sebuah token `uuid` dibuat & disimpan, lalu email verifikasi dikirim.
+
+- **Tanpa konfigurasi SMTP** (`MAIL_HOST` kosong): otomatis memakai **akun uji Ethereal** — email tidak benar-benar terkirim, tapi muncul **preview URL** di console backend (dan pada field `emailPreviewUrl` respons register).
+- **Email sungguhan:** isi `MAIL_HOST`, `MAIL_USER`, `MAIL_PASS` (mis. SMTP Gmail) di `.env` — kode otomatis memakainya.
+
+Verifikasi: `GET /api/auth/verify-email?token=<token>`
+- token tidak ditemukan → `"Invalid Verification Token"`
+- berhasil → `"Email Verified Successfully"` (kolom `is_verified` di-set & token dihapus)
+
+---
+
+## 10. Upload Gambar (multer)
+
+| Method | Endpoint | Body |
+|---|---|---|
+| POST | `/api/upload` | `form-data`, field **`file`** (gambar) |
+
+- File disimpan ke folder `uploads/` dengan nama unik.
+- Hanya menerima gambar (`jpg/png/webp/gif`), maksimal `UPLOAD_MAX_SIZE` (default 2 MB) — selain itu `400`.
+- Respons `201` memuat `url` file, dan file dapat diakses via `GET /uploads/<nama-file>`.
+
+```json
+{ "success": true, "message": "File berhasil diunggah",
+  "data": { "filename": "foto-1699....png", "size": 12345, "url": "http://localhost:4000/uploads/foto-1699....png" } }
 ```
 
 ---
 
-## 6. Pengujian dengan Postman (Langkah Keempat: Testing)
+## 11. Pengujian dengan Postman
 
-1. Buka Postman → **Import** → pilih file **`postman_collection.json`** (ada di
-   folder ini).
-2. Collection **"Video Belajar API (Edu Course)"** berisi 16 folder (Root/Health
-   + 15 resource) dengan total ±94 request siap pakai.
-3. Variable `{{baseUrl}}` sudah diset ke `http://localhost:4000/api`. Ubah bila
-   port/host berbeda (Collection → Variables).
-4. Jalankan request per folder untuk menguji GET / POST / PUT / PATCH / DELETE.
-
-> Tip: jalankan `POST` dulu untuk membuat data, catat `id` dari response, lalu
-> pakai id itu pada request `GET by id` / `PATCH` / `DELETE`.
+1. **Import** `postman_collection.json`.
+2. Folder **Auth** (Register, Login, Verify Email) & **Upload** sudah tersedia, selain 15 resource CRUD.
+3. Request **Login** punya *test-script* yang otomatis menyimpan `token` ke variable `{{token}}`.
+4. Request yang terproteksi (mis. `GET /courses`) sudah memakai header `Authorization: Bearer {{token}}` — jalankan **Login** dulu, lalu request lain.
 
 ---
 
-## 7. Struktur Proyek
+## 12. Struktur Proyek
 
 ```
 backend/
 ├── db/
-│   ├── schema.sql          # DDL 15 tabel (Langkah Pertama)
-│   └── seed.sql            # data contoh
-├── scripts/
-│   └── runSql.js           # runner untuk mengeksekusi file .sql
+│   ├── schema.sql              # DDL 15 tabel (users + kolom username, is_verified, verification_token)
+│   └── seed.sql                # data contoh
+├── scripts/runSql.js           # runner file .sql
 ├── src/
-│   ├── config/
-│   │   ├── env.js          # memuat variabel .env
-│   │   └── db.js           # koneksi mysql2 (connection pool)
-│   ├── services/           # LANGKAH KEDUA: DML (SELECT/INSERT/UPDATE/DELETE)
-│   │   ├── baseService.js  # factory CRUD (query SQL parameterized)
-│   │   ├── courses.service.js  # service courses + JOIN
-│   │   └── index.js        # registry 15 resource
-│   ├── controllers/
-│   │   └── baseController.js    # handler HTTP (bentuk response)
-│   ├── routes/             # LANGKAH KETIGA: REST API
-│   │   ├── crudRouter.js   # 6 endpoint CRUD per resource
-│   │   └── index.js        # memasang semua resource ke /api
+│   ├── config/{env.js, db.js}  # env & koneksi mysql2 (pool)
+│   ├── services/
+│   │   ├── baseService.js       # factory CRUD (parameterized)
+│   │   ├── courses.service.js   # courses + JOIN
+│   │   ├── auth.service.js      # register / login / verifyEmail
+│   │   ├── mail.service.js      # nodemailer (Ethereal fallback)
+│   │   └── index.js             # registry 15 resource
+│   ├── controllers/{baseController.js, auth.controller.js, upload.controller.js}
+│   ├── routes/
+│   │   ├── crudRouter.js        # 6 endpoint CRUD + guard opsional
+│   │   ├── auth.routes.js       # /auth/*
+│   │   ├── upload.routes.js     # /upload
+│   │   └── index.js             # merangkai /api + guards
 │   ├── middlewares/
-│   │   ├── notFound.js     # 404
-│   │   └── errorHandler.js # penanganan error terpusat (termasuk error MySQL)
-│   ├── utils/
-│   │   ├── ApiError.js
-│   │   └── asyncHandler.js
-│   ├── app.js              # konfigurasi Express + middleware
-│   └── server.js           # titik masuk (start server)
-├── postman_collection.json # koleksi Postman untuk testing
+│   │   ├── auth.middleware.js    # verifyToken (JWT)
+│   │   ├── upload.middleware.js  # multer
+│   │   ├── notFound.js
+│   │   └── errorHandler.js
+│   ├── utils/{ApiError.js, asyncHandler.js, queryBuilder.js}
+│   ├── app.js
+│   └── server.js
+├── uploads/                     # hasil upload (di-ignore git, kecuali .gitkeep)
+├── postman_collection.json
 ├── .env.example
 └── package.json
 ```
 
 ---
 
-## 8. Catatan Keamanan & Praktik Baik
+## 13. Keamanan & Praktik Baik
 
-- Semua query memakai **prepared statement** (`?`) sehingga aman dari **SQL Injection**.
-- Kredensial database disimpan di **`.env`** (tidak di-hardcode, dan `.env` diabaikan git).
-- Error database umum (duplikat unik, foreign key, kolom wajib kosong, nilai ENUM salah)
-  diterjemahkan otomatis ke HTTP status yang sesuai (409 / 400) oleh `errorHandler`.
-- `password_hash` pada seed hanya contoh — di produksi gunakan hashing (mis. bcrypt).
-
----
-
-## 9. Menghubungkan ke Frontend (opsional)
-
-Frontend React saat ini memakai `VITE_API_BASE_URL`. Untuk memakai backend ini,
-ubah `.env` frontend menjadi:
-
-```env
-VITE_API_BASE_URL=http://localhost:4000/api
-```
-
-Endpoint `/courses` pada backend kompatibel dengan pola pemanggilan di
-`src/services/api/courseService.js` (GET, GET by id, POST, PUT, DELETE).
+- Semua query memakai **prepared statement** (`?`) → aman **SQL Injection**; kolom sort dibatasi **whitelist**.
+- Password disimpan sebagai **hash bcrypt** (tidak pernah plaintext).
+- Token JWT ditandatangani dengan `JWT_SECRET` dari `.env`.
+- Kredensial di **`.env`** (di-ignore git); `.env.example` sebagai template.
+- Error DB umum (duplikat unik, FK, kolom wajib, ENUM salah) diterjemahkan otomatis ke HTTP status yang sesuai.
 
 ---
 
-*Dibuat untuk Mission Intermediate Backend 1A — Aplikasi Video Belajar (Edu Course).*
+## 14. Menghubungkan ke Frontend
+
+Frontend (`../frontend`) diarahkan ke backend ini lewat `VITE_API_BASE_URL=http://localhost:4000/api`. Autentikasi (register & login) sudah tersambung: token JWT disimpan di `localStorage` dan otomatis disisipkan ke header oleh `axiosClient`.
+
+---
+
+*Mission Intermediate Backend — Aplikasi Video Belajar (Edu Course).*
