@@ -3,7 +3,9 @@
 // Memanfaatkan kembali service `users` (dari registry) untuk operasi DB,
 // sehingga query INSERT/SELECT tetap konsisten dengan resource lain.
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import ApiError from '../utils/ApiError.js';
+import { jwtConfig } from '../config/env.js';
 import { services } from './index.js';
 
 const users = services.users;
@@ -78,4 +80,35 @@ async function register(payload = {}) {
   return sanitize(created);
 }
 
-export default { register, sanitize };
+// ── LOGIN ──────────────────────────────────────────────────
+async function login(payload = {}) {
+  const { email, password } = payload;
+  if (!email || !password) {
+    throw new ApiError(400, 'Email dan password wajib diisi');
+  }
+
+  const rows = await users.getBy('email', email);
+  const user = rows[0];
+
+  // Pesan sengaja disamakan untuk user tidak ada / password salah,
+  // supaya tidak membocorkan email mana yang terdaftar.
+  if (!user) {
+    throw new ApiError(401, 'Email atau password salah');
+  }
+
+  const match = await bcrypt.compare(password, user.password_hash);
+  if (!match) {
+    throw new ApiError(401, 'Email atau password salah');
+  }
+
+  // Buat token JWT berisi identitas ringkas (jangan taruh data sensitif).
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    jwtConfig.secret,
+    { expiresIn: jwtConfig.expiresIn }
+  );
+
+  return { token, user: sanitize(user) };
+}
+
+export default { register, login, sanitize };

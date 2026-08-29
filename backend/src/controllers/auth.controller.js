@@ -13,3 +13,14 @@ export const register = asyncHandler(async (req, res) => {
     data: user,
   });
 });
+
+// POST /api/auth/login  → login & dapatkan token JWT
+export const login = asyncHandler(async (req, res) => {
+  const { token, user } = await authService.login(req.body);
+  res.json({
+    success: true,
+    message: 'Login berhasil',
+    token,
+    data: user,
+  });
+});
