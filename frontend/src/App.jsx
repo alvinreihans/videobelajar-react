@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { fetchCourses } from './store/redux/coursesSlice';
+import { useAuth } from './context/AuthContext';
 import Home from './pages/Home';
 import AllProducts from './pages/AllProducts';
 import ProductDetail from './pages/ProductDetail';
@@ -31,10 +32,14 @@ const guarded = (el) => (
 
 function App() {
   const dispatch = useDispatch();
+  const { user } = useAuth();
 
+  // Ambil ulang daftar kelas setiap kali status login berubah, karena jalur
+  // endpoint-nya ikut berpindah: publik saat belum login, terproteksi (JWT)
+  // setelah login. Tanpa ini perpindahan baru terasa setelah halaman di-refresh.
   useEffect(() => {
     dispatch(fetchCourses());
-  }, [dispatch]);
+  }, [dispatch, user?.id]);
 
   return (
     <BrowserRouter>

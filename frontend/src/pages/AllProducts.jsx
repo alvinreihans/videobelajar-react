@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCatalog } from '../store/redux/coursesSlice';
 import ProductCard from '../components/ui/ProductCard';
 import { CATEGORIES } from '../data/courses';
 import { getCourseMeta } from '../data/courseDetails';
@@ -23,6 +24,18 @@ const SORTS = [
   { value: 'rating-desc', label: 'Rating Tertinggi' },
   { value: 'rating-asc', label: 'Rating Terendah' },
 ];
+// Pemetaan pilihan dropdown ke query params backend. Semua kolom di sini ada
+// dalam whitelist `sortable` milik courses.service, jadi ORDER BY dikerjakan
+// SQL, bukan JavaScript.
+const SORT_PARAMS = {
+  'price-asc': { sortBy: 'price', order: 'asc' },
+  'price-desc': { sortBy: 'price', order: 'desc' },
+  az: { sortBy: 'title', order: 'asc' },
+  za: { sortBy: 'title', order: 'desc' },
+  'rating-desc': { sortBy: 'rating', order: 'desc' },
+  'rating-asc': { sortBy: 'rating', order: 'asc' },
+};
+
 const PER_PAGE = 6;
 
 // ─── IKON ────────────────────────────────────────────────────────────────────
@@ -124,7 +137,10 @@ function Pagination({ page, totalPages, onChange }) {
 
 // ─── PAGE ────────────────────────────────────────────────────────────────────
 export default function AllProducts() {
-  const { items: courses, loading, error } = useSelector((state) => state.courses);
+  const dispatch = useDispatch();
+  // Cabang `catalog` — hasil filter dari server, terpisah dari katalog penuh
+  // yang dibaca Beranda & halaman lain.
+  const { items: courses, loading, error } = useSelector((state) => state.courses.catalog);
 
   const [categories, setCategories] = useState([]);
   const [prices, setPrices] = useState([]);
@@ -132,6 +148,27 @@ export default function AllProducts() {
   const [sort, setSort] = useState(null);
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
+
+  // Pencarian ditunda 350 ms setelah ketikan terakhir, supaya satu kata tidak
+  // berubah menjadi satu request per huruf.
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query.trim()), 350);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // ── PENYARINGAN DI SERVER ──────────────────────────────────────────────────
+  // filter (WHERE IN) + search (LIKE) + sort (ORDER BY) dikirim sebagai query
+  // params. Harga & durasi tidak ikut karena tidak punya padanan di database.
+  useEffect(() => {
+    dispatch(fetchCatalog({
+      topic: categories.length ? categories.join(',') : undefined,
+      search: debouncedQuery || undefined,
+      ...(sort ? SORT_PARAMS[sort] : {}),
+    }));
+    // Halaman tidak perlu di-reset di sini: setiap kontrol filter sudah
+    // memanggil setPage(1) sendiri saat diklik.
+  }, [dispatch, categories, debouncedQuery, sort]);
 
   const toggle = (list, setList, value) => {
     setPage(1);
@@ -141,16 +178,13 @@ export default function AllProducts() {
     setCategories([]); setPrices([]); setDuration(null); setQuery(''); setPage(1);
   };
 
+  // Sisa penyaringan yang tidak bisa diserahkan ke server:
+  //   Harga    — UI mengizinkan beberapa rentang terpisah sekaligus, bukan satu
+  //              rentang tunggal, sehingga tidak dapat dipetakan ke satu WHERE.
+  //   Durasi   — tidak ada kolomnya di database; angkanya dikarang getCourseMeta.
+  // Pencarian, kategori, dan pengurutan sudah selesai di SQL sebelum sampai sini.
   const filtered = useMemo(() => {
-    let result = [...courses];
-    if (query.trim()) {
-      const q = query.toLowerCase();
-      result = result.filter((c) =>
-        c.title?.toLowerCase().includes(q) ||
-        c.instructor?.toLowerCase().includes(q) ||
-        c.description?.toLowerCase().includes(q));
-    }
-    if (categories.length) result = result.filter((c) => categories.includes(c.category));
+    let result = courses;
     if (prices.length) {
       const ranges = PRICE_RANGES.filter((r) => prices.includes(r.value));
       result = result.filter((c) => ranges.some((r) => r.test(getCourseMeta(c).priceValue)));
@@ -159,17 +193,8 @@ export default function AllProducts() {
       const d = DURATIONS.find((x) => x.value === duration);
       result = result.filter((c) => d.test(getCourseMeta(c).durationHours));
     }
-    switch (sort) {
-      case 'price-asc': result.sort((a, b) => getCourseMeta(a).priceValue - getCourseMeta(b).priceValue); break;
-      case 'price-desc': result.sort((a, b) => getCourseMeta(b).priceValue - getCourseMeta(a).priceValue); break;
-      case 'az': result.sort((a, b) => (a.title || '').localeCompare(b.title || '')); break;
-      case 'za': result.sort((a, b) => (b.title || '').localeCompare(a.title || '')); break;
-      case 'rating-desc': result.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
-      case 'rating-asc': result.sort((a, b) => (a.rating || 0) - (b.rating || 0)); break;
-      default: break;
-    }
     return result;
-  }, [courses, query, categories, prices, duration, sort]);
+  }, [courses, prices, duration]);
 
   const totalPages = Math.ceil(filtered.length / PER_PAGE) || 1;
   const safePage = Math.min(page, totalPages);

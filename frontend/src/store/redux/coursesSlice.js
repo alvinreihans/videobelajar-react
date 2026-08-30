@@ -3,10 +3,19 @@ import * as courseApi from '../../services/api/courseService';
 
 // ─── ASYNC THUNKS (memanggil fungsi API dari services/api) ───────────────────
 
-// GET — ambil semua kelas dari MockAPI
+// GET — ambil semua kelas untuk katalog.
+// courseService yang memilih jalurnya: publik bila belum login, terproteksi
+// (JWT) bila sudah login.
 export const fetchCourses = createAsyncThunk('courses/fetchAll', async () => {
-  const data = await courseApi.getCourses();
-  return Array.isArray(data) ? data : [];
+  return await courseApi.getCourses();
+});
+
+// GET — katalog TERFILTER untuk halaman Semua Kelas.
+// Hasilnya sengaja disimpan terpisah dari `items`: sembilan halaman lain
+// (Beranda, Detail Produk, Pesanan, Kelas Saya, …) membaca `items` sebagai
+// katalog penuh, dan tidak boleh ikut menyusut saat pengguna memfilter.
+export const fetchCatalog = createAsyncThunk('courses/fetchCatalog', async (params) => {
+  return await courseApi.getCourses(params);
 });
 
 // ADD — tambah kelas baru
@@ -34,9 +43,12 @@ const coursesSlice = createSlice({
   name: 'courses',
   // Initial State: array kosong (items) yang nanti diisi data dari API.
   initialState: {
+    // Katalog penuh — sumber data bagi hampir semua halaman.
     items: [],
     loading: false,
     error: null,
+    // Katalog hasil filter/sort/search dari server — khusus halaman Semua Kelas.
+    catalog: { items: [], loading: false, error: null },
   },
   reducers: {},
   // extraReducers: menangani hasil dari thunk API dan menyimpannya ke state.
@@ -54,6 +66,19 @@ const coursesSlice = createSlice({
       .addCase(fetchCourses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      // GET terfilter — hanya menyentuh cabang `catalog`
+      .addCase(fetchCatalog.pending, (state) => {
+        state.catalog.loading = true;
+        state.catalog.error = null;
+      })
+      .addCase(fetchCatalog.fulfilled, (state, action) => {
+        state.catalog.loading = false;
+        state.catalog.items = action.payload;
+      })
+      .addCase(fetchCatalog.rejected, (state, action) => {
+        state.catalog.loading = false;
+        state.catalog.error = action.error.message;
       })
       // ADD — masukkan hasil ke paling depan
       .addCase(addCourse.fulfilled, (state, action) => {

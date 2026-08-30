@@ -39,7 +39,11 @@ axiosClient.interceptors.response.use(
     if (import.meta.env.DEV) {
       console.error('[API ERROR]', message);
     }
-    return Promise.reject(new Error(message));
+    // Kode status ikut dibawa agar pemanggil bisa membedakan jenis kegagalan
+    // (mis. 401 token kedaluwarsa) tanpa perlu menebak dari teks pesan.
+    const apiError = new Error(message);
+    apiError.status = error.response?.status ?? null;
+    return Promise.reject(apiError);
   }
 );
 
