@@ -17,6 +17,7 @@ export function toInt(value, fallback, max) {
 // config:
 //   columns      { paramKey: 'sql.column' }  → pemetaan kolom untuk FILTER
 //   filterKeys   ['status', ...]             → param yang boleh jadi filter (WHERE =)
+//   inKeys       ['topic', ...]              → param multi-nilai dipisah koma (WHERE IN)
 //   sortable     { sortByValue: 'sql.column' }→ whitelist kolom untuk SORT
 //   likeColumns  ['sql.col', ...]            → kolom yang dicari saat SEARCH (LIKE)
 //   defaultOrder 'id DESC'                   → urutan default bila sortBy kosong
@@ -24,6 +25,7 @@ export function buildListClauses(filters = {}, config = {}) {
   const {
     columns = {},
     filterKeys = [],
+    inKeys = [],
     sortable = {},
     likeColumns = [],
     defaultOrder = 'id DESC',
@@ -39,6 +41,23 @@ export function buildListClauses(filters = {}, config = {}) {
       conditions.push(`${columns[key] || key} = ?`);
       params.push(value);
     }
+  }
+
+  // ── FILTER GANDA: beberapa pilihan sekaligus → WHERE `col` IN (?, ?) ──
+  // Nilainya dipisah koma, mis. ?topic=desain,bisnis. Satu nilai tetap sah
+  // (menjadi IN dengan satu placeholder), sehingga ?topic=desain tidak berubah
+  // perilakunya. Jumlah placeholder mengikuti jumlah nilai → tetap aman dari
+  // SQL Injection karena tidak ada nilai yang disambung langsung ke SQL.
+  for (const key of inKeys) {
+    const raw = filters[key];
+    if (raw === undefined || raw === '') continue;
+    const values = String(raw)
+      .split(',')
+      .map((v) => v.trim())
+      .filter(Boolean);
+    if (values.length === 0) continue;
+    conditions.push(`${columns[key] || key} IN (${values.map(() => '?').join(', ')})`);
+    params.push(...values);
   }
 
   // ── SEARCH: pencarian karakter → WHERE (colA LIKE ? OR colB LIKE ?) ──

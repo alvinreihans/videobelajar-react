@@ -41,7 +41,9 @@ const LIST_CONFIG = {
     slug: 'c.slug',
     topic: 'cat.slug',          // ?topic=<slug-kategori> → filter berdasarkan kategori
   },
-  filterKeys: ['category_id', 'tutor_id', 'status', 'slug', 'topic'],
+  filterKeys: ['category_id', 'tutor_id', 'status', 'slug'],
+  // Kategori boleh lebih dari satu sekaligus: ?topic=desain,bisnis
+  inKeys: ['topic'],
   sortable: {
     price: 'c.price',
     rating: 'c.rating',
