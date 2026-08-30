@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from './ui/Button';
 import UnstyledButton from './ui/UnstyledButton';
+import { resolveAvatar } from '../utils/asset';
 
 export default function Navigation({ variant = 'guest' }) {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -72,8 +73,9 @@ export default function Navigation({ variant = 'guest' }) {
             <div className="relative" ref={dropdownRef}>
               <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 <img
-                  src="/avatar-user.svg"
-                  className="w-9 h-9 rounded-lg border border-border"
+                  src={resolveAvatar(user?.avatar)}
+                  alt="Foto profil"
+                  className="w-9 h-9 rounded-lg border border-border object-cover"
                 />
               </button>
 
