@@ -160,6 +160,27 @@ curl http://localhost:4000/api/courses -H "Authorization: Bearer <TOKEN>"
 
 > Proteksi diatur per-resource di `src/routes/index.js` (objek `guards`), mis. `{ courses: { list: [verifyToken] } }` — mudah dipindah/ditambah ke endpoint lain.
 
+### Pendamping publik — `/api/public`
+
+Karena `GET /api/courses` dijaga JWT, halaman katalog frontend (Beranda & Semua Kelas)
+yang boleh dibuka pengunjung **tanpa login** memakai jalur baca-saja berikut:
+
+| Method | Endpoint | Token | Keterangan |
+|---|---|---|---|
+| GET | `/api/public/courses` | — | Daftar kelas untuk katalog publik (query params tetap berlaku) |
+| GET | `/api/public/courses/:id` | — | Detail satu kelas |
+| GET | `/api/public/categories` | — | Data referensi kategori (nama & slug) |
+
+```bash
+curl http://localhost:4000/api/public/courses    # 200, tanpa token
+curl http://localhost:4000/api/courses           # 401, butuh token
+```
+
+Jadi `/api/public/*` melayani pembacaan publik, sementara `/api/courses` tetap
+terproteksi sebagai bukti penerapan middleware (Langkah Keempat). Jalur publik
+sengaja **hanya** menyediakan `GET` — semua tambah/ubah/hapus tetap lewat
+resource terproteksi.
+
 ---
 
 ## 7. CRUD 15 Resource
@@ -185,7 +206,7 @@ Pada endpoint list (mis. `GET /api/courses`):
 | Jenis | Param | Contoh | SQL |
 |---|---|---|---|
 | **Filter** | nama kolom | `?status=published&category_id=2` | `WHERE col = ?` |
-| **Filter (courses)** | `topic` | `?topic=desain` | `WHERE cat.slug = ?` |
+| **Filter (courses)** | `topic` | `?topic=desain,bisnis` | `WHERE cat.slug IN (?, ?)` |
 | **Sort** | `sortBy` + `order` | `?sortBy=price&order=asc` | `ORDER BY col ASC/DESC` |
 | **Search** | `search` | `?search=react` | `WHERE (colA LIKE ? OR ...)` |
 | **Paginasi** | `limit`, `offset` | `?limit=10&offset=0` | `LIMIT ? OFFSET ?` |
@@ -193,10 +214,12 @@ Pada endpoint list (mis. `GET /api/courses`):
 Contoh gabungan:
 
 ```
-GET /api/courses?topic=desain&search=ui&sortBy=rating&order=desc&limit=6
+GET /api/courses?topic=desain,bisnis&search=ui&sortBy=rating&order=desc&limit=6
 ```
 
 - Kolom untuk **sort** dibatasi *whitelist* per-resource (aman dari SQL injection).
+- `topic` menerima beberapa slug dipisah koma. Satu nilai tetap sah (`?topic=desain`),
+  jumlah placeholder `?` mengikuti jumlah nilai sehingga tetap prepared statement.
 - `courses` mendukung sort: `price`, `rating`, `students`, `title`, `newest`, `id`; search di judul/deskripsi/nama tutor.
 
 ---

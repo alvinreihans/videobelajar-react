@@ -123,6 +123,99 @@
       ]
     },
     {
+      "name": "Public (tanpa token)",
+      "description": "Endpoint baca-saja untuk katalog publik. GET /courses dijaga JWT (Langkah Keempat), jadi halaman Beranda & Semua Kelas di frontend memakai jalur ini agar tetap bisa dibuka pengunjung yang belum login.",
+      "item": [
+        {
+          "name": "List Courses Publik (GET /public/courses)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "public",
+                "courses"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Courses Publik + Query Params (filter ganda, search, sort)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/courses?topic=desain,bisnis&search=design&sortBy=price&order=asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "public",
+                "courses"
+              ],
+              "query": [
+                {
+                  "key": "topic",
+                  "value": "desain,bisnis"
+                },
+                {
+                  "key": "search",
+                  "value": "design"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "price"
+                },
+                {
+                  "key": "order",
+                  "value": "asc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Detail Course Publik (GET /public/courses/:id)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/courses/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "public",
+                "courses",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Kategori Publik (GET /public/categories)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/public/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "public",
+                "categories"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "Root & Health",
       "item": [
         {
